@@ -1,0 +1,49 @@
+{
+  "name": "yoga-website",
+  "version": "1.0.0",
+  "description": "Yoga instructor website",
+  "homepage": "https://github.com/anusha-g8/Yoga-Website#readme",
+  "bugs": {
+    "url": "https://github.com/anusha-g8/Yoga-Website/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anusha-g8/Yoga-Website.git"
+  },
+  "license": "ISC",
+  "author": "Anusha G",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js,.jsx",
+    "lint:fix": "eslint . --ext .js,.jsx --fix",
+    "format": "prettier --write .",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.15.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^14.3.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^4.0.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "jsdom": "^28.1.0",
+    "prettier": "^2.8.8",
+    "vite": "^5.1.0",
+    "vitest": "^1.6.1"
+  }
+}
