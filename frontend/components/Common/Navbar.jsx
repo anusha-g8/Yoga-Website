@@ -1,13 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import trishulImg from "../../assets/images/Trishual.png";
 
 const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white shadow-sm">
       <div className="container">
         <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
-          <img src={trishulImg} alt="" height="64" style={{ objectFit: 'contain' }} />
+          <img src="/assets/images/Trishual.png" alt="" height="64" style={{ objectFit: 'contain' }} />
           <svg
             width="132" height="64" viewBox="0 0 132 64"
             fill="none" xmlns="http://www.w3.org/2000/svg"

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -13,8 +14,8 @@ const Hero = () => {
               Private and group classes that help you build strength, mobility, and calm — delivered in a nurturing, accessible environment.
             </p>
             <div className="d-flex gap-2 mt-3">
-              <a className="btn btn-primary btn-lg" href="/about">Start here</a>
-              <a className="btn btn-outline-secondary btn-lg" href="/about">Learn more</a>
+              <Link className="btn btn-primary btn-lg" to="/about">Start here</Link>
+              <Link className="btn btn-outline-secondary btn-lg" to="/about">Learn more</Link>
             </div>
           </div>
           <div className="col-12 col-md-5 mt-4 mt-md-0">
