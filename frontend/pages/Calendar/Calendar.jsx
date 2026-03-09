@@ -1,12 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Calendar = () => {
-  const schedule = [
-    { day: 'Monday', time: '08:00 - 09:00', class: 'Morning Flow', level: 'All levels' },
-    { day: 'Wednesday', time: '18:00 - 19:15', class: 'Hatha Yoga', level: 'Beginner' },
-    { day: 'Friday', time: '07:30 - 08:30', class: 'Vinyasa Flow', level: 'Intermediate' },
-    { day: 'Saturday', time: '10:00 - 11:30', class: 'Weekend Workshop', level: 'Advanced' },
-  ];
+  const [schedule, setSchedule] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [bookingStatus, setBookingStatus] = useState({ type: '', message: '' });
+
+  useEffect(() => {
+    fetch('/api/schedule')
+      .then(res => res.json())
+      .then(data => {
+        setSchedule(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching schedule:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleBook = async (classId) => {
+    // Simple mock booking for now - would ideally open a modal
+    const userName = prompt('Enter your name:');
+    const userEmail = prompt('Enter your email:');
+    
+    if (!userName || !userEmail) return;
+
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_name: userName, user_email: userEmail, class_id: classId })
+      });
+      if (response.ok) {
+        alert('Booking successful!');
+      } else {
+        alert('Booking failed.');
+      }
+    } catch (error) {
+      console.error('Booking error:', error);
+    }
+  };
+
+  if (loading) return <div className="container my-5 text-center">Loading schedule...</div>;
 
   return (
     <div className="container my-5">
@@ -23,13 +58,20 @@ const Calendar = () => {
             </tr>
           </thead>
           <tbody>
-            {schedule.map((item, index) => (
-              <tr key={index}>
+            {schedule.map((item) => (
+              <tr key={item.id}>
                 <td className="fw-bold">{item.day}</td>
                 <td>{item.time}</td>
-                <td>{item.class}</td>
+                <td>{item.class_name}</td>
                 <td><span className="badge bg-light text-dark border">{item.level}</span></td>
-                <td><button className="btn btn-sm btn-outline-primary">Book Class</button></td>
+                <td>
+                  <button 
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={() => handleBook(item.id)}
+                  >
+                    Book Class
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
