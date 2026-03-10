@@ -1,7 +1,12 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
+import path from 'path';
 
-dotenv.config();
+// Load environment-specific file if NODE_ENV is set
+const envFile = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
+dotenv.config({ path: path.resolve(process.cwd(), '../', envFile) });
+// Also try current directory for Docker environments
+dotenv.config(); 
 
 const { Pool } = pg;
 
@@ -11,6 +16,7 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
+  ssl: process.env.DB_HOST.includes('rds.amazonaws.com') ? { rejectUnauthorized: false } : false
 });
 
 pool.on('connect', () => {
