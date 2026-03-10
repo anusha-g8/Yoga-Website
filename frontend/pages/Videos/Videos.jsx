@@ -3,32 +3,20 @@ import React from 'react';
 const Videos = () => {
   const videos = [
     {
-      title: '15 Min Morning Wakeup',
-      duration: '15:20',
-      level: 'All levels',
-      desc: 'Start your day with gentle movement and focused breathing.',
-      thumb: '/assets/images/yoga1.jpg'
-    },
-    {
-      title: 'Hatha Yoga for Flexibility',
-      duration: '45:00',
-      level: 'Intermediate',
-      desc: 'A deep stretching session targeting hips and hamstrings.',
-      thumb: '/assets/images/yoga2.jpg'
-    },
-    {
-      title: 'Bedtime Calm Down',
-      duration: '10:15',
+      title: 'Easy Morning Yoga For Beginners',
+      duration: '15:12',
       level: 'Beginner',
-      desc: 'A restorative sequence to prepare your body for restful sleep.',
-      thumb: '/assets/images/yoga3.jpg'
+      desc: 'A gentle and effective morning flow to wake up your body and mind.',
+      youtubeId: 'Y2RcO6TKO4s',
+      url: 'https://www.youtube.com/watch?v=Y2RcO6TKO4s&vl=en'
     },
     {
-      title: 'Core Strength Vinyasa',
-      duration: '30:00',
-      level: 'Intermediate',
-      desc: 'Focus on abdominal strength and stability through flow.',
-      thumb: '/assets/images/yoga1.jpg'
+      title: 'Full Body Flow - Breathe & Release',
+      duration: '20:15',
+      level: 'All levels',
+      desc: 'A powerful full body flow to release tension and build strength.',
+      youtubeId: 'ZAlpjTIe0DA',
+      url: 'https://www.youtube.com/watch?v=ZAlpjTIe0DA&t=913s'
     }
   ];
 
@@ -39,22 +27,32 @@ const Videos = () => {
         {videos.map((video, idx) => (
           <div key={idx} className="col-12 col-md-6">
             <div className="card h-100 shadow-sm overflow-hidden border-0">
-              <div className="position-relative">
-                <img src={video.thumb} className="card-img-top" alt={video.title} style={{ height: '220px', objectFit: 'cover' }} />
-                <div className="position-absolute top-50 start-50 translate-middle">
-                  <i className="bi bi-play-circle-fill text-white opacity-75" style={{ fontSize: '4rem' }}></i>
-                </div>
-                <div className="position-absolute bottom-0 end-0 bg-dark text-white px-2 py-1 m-2 rounded small opacity-75">
-                  {video.duration}
-                </div>
+              <div className="ratio ratio-16x9">
+                <iframe
+                  src={`https://www.youtube.com/embed/${video.youtubeId}${video.youtubeId === 'Y2RcO6TKO4s' ? '?hl=en' : video.youtubeId === 'ZAlpjTIe0DA' ? '?start=913' : ''}`}
+                  title={video.title}
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  style={{ borderRadius: '8px 8px 0 0' }}
+                ></iframe>
               </div>
               <div className="card-body">
                 <div className="d-flex justify-content-between align-items-start mb-2">
                   <h5 className="card-title fw-bold mb-0">{video.title}</h5>
                   <span className="badge bg-light text-primary border border-primary-subtle">{video.level}</span>
                 </div>
-                <p className="card-text text-muted small">{video.desc}</p>
-                <button className="btn btn-outline-primary btn-sm">Watch Session</button>
+                <p className="card-text text-muted small mb-0">{video.desc}</p>
+                <div className="mt-3 d-flex justify-content-between align-items-center">
+                  <span className="text-muted small"><i className="bi bi-clock me-1"></i>{video.duration}</span>
+                  <a 
+                    href={video.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="btn btn-link btn-sm p-0 text-decoration-none"
+                  >
+                    View on YouTube <i className="bi bi-box-arrow-up-right ms-1"></i>
+                  </a>
+                </div>
               </div>
             </div>
           </div>

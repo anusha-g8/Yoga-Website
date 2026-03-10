@@ -5,24 +5,27 @@ import "./Classes.css";
 const sampleClasses = [
   {
     id: 1,
-    title: "Morning Flow",
-    length: "45 min",
-    level: "All levels",
-    img: "/assets/images/yoga1.jpg",
+    title: "Easy Morning Yoga",
+    length: "15 min",
+    level: "Beginner",
+    youtubeId: "Y2RcO6TKO4s",
+    url: "https://www.youtube.com/watch?v=Y2RcO6TKO4s&vl=en"
   },
   {
     id: 2,
-    title: "Slow Hatha",
-    length: "60 min",
-    level: "Beginner",
-    img: "/assets/images/yoga2.jpg",
+    title: "Full Body Flow",
+    length: "16 min",
+    level: "All levels",
+    youtubeId: "K-6zThqLp8E",
+    url: "https://www.youtube.com/watch?v=K-6zThqLp8E"
   },
   {
     id: 3,
-    title: "Vinyasa Build",
-    length: "50 min",
-    level: "Intermediate",
-    img: "/assets/images/yoga3.jpg",
+    title: "Total Body Detox",
+    length: "20 min",
+    level: "Advanced",
+    youtubeId: "pS-W_6rT-m8",
+    url: "https://www.youtube.com/watch?v=pS-W_6rT-m8"
   },
 ];
 
@@ -30,17 +33,31 @@ const Classes = () => {
   return (
     <section className="py-5">
       <div className="container">
-        <h2 className="mb-4">Classes</h2>
+        <h2 className="mb-4">Featured Practice Sessions</h2>
         <div className="row g-4">
           {sampleClasses.map((c) => (
             <div key={c.id} className="col-12 col-md-6 col-lg-4">
-              <div className="card h-100 shadow-sm">
-                <img src={c.img} className="card-img-top" alt={c.title} />
+              <div className="card h-100 shadow-sm border-0 overflow-hidden">
+                <div className="ratio ratio-16x9">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${c.youtubeId}${c.youtubeId === 'Y2RcO6TKO4s' ? '?hl=en' : ''}`}
+                    title={c.title}
+                    allowFullScreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  ></iframe>
+                </div>
                 <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">{c.title}</h5>
-                  <p className="card-text text-muted">{c.length} • {c.level}</p>
+                  <h5 className="card-title fw-bold">{c.title}</h5>
+                  <p className="card-text text-muted small">{c.length} • {c.level}</p>
                   <div className="mt-auto">
-                    <button className="btn btn-outline-primary">View</button>
+                    <a 
+                      href={c.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="btn btn-outline-primary btn-sm w-100"
+                    >
+                      Watch on YouTube
+                    </a>
                   </div>
                 </div>
               </div>

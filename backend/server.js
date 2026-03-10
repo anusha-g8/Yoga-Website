@@ -8,8 +8,13 @@ import scheduleRoutes from './src/routes/scheduleRoutes.js';
 import bookingRoutes from './src/routes/bookingRoutes.js';
 import inquiryRoutes from './src/routes/inquiryRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,6 +23,10 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
+app.use((req, res, next) => {
+  console.log(`URL: ${req.url}, NODE_ENV: ${process.env.NODE_ENV}`);
+  next();
+});
 
 // Routes
 app.use('/api/programs', programRoutes);
@@ -35,6 +44,16 @@ app.get('/api/health', async (req, res) => {
     res.status(500).json({ status: 'Error', message: 'Database connection failed', error: err.message });
   }
 });
+
+// Serve frontend static files in production
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, '../frontend/dist');
+  app.use(express.static(frontendPath));
+  
+  app.use((req, res) => {
+    res.sendFile(path.resolve(frontendPath, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
