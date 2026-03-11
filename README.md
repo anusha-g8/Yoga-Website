@@ -1,53 +1,93 @@
-# Yoga-Website
+# Yoga Website Project
 
-Full stack development project for yoga website.
+A full-stack yoga instructor platform with a React frontend, Node.js/Express backend, and PostgreSQL database. Deployed using a modern AWS architecture with S3, CloudFront, and EC2.
 
-## Getting Started
+---
 
-### 1. Database Configuration
-The application points to different databases depending on the environment. **Note: Staging and Production require the database to listen on port 5435.**
+## 🌍 Environment & Deployment Details
 
-| Environment | Database Host | DB Port | SSL | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| **Development** | `localhost` | **5432** | No | Your local PostgreSQL installation. |
-| **Staging** | `AWS RDS (Staging)` | **5435** | Yes | Shared AWS RDS instance. |
-| **Production** | `AWS RDS (Prod)` | **5435** | Yes | Dedicated AWS RDS (to be created). |
+### 1. Production (Live)
+The stable, public-facing version of the application.
+- **Frontend (HTTPS/CDN):** [https://d2wyh3p9dtg0ey.cloudfront.net](https://d2wyh3p9dtg0ey.cloudfront.net)
+- **Backend API (Direct):** `http://3.76.81.81:5005/api`
+- **Infrastructure:** S3 + CloudFront (Frontend), EC2 with Docker (Backend/DB).
+- **Region:** `eu-central-1` (Frankfurt).
 
-> **⚠️ AWS Configuration Requirement:**
-> To use port **5435** in Staging/Production, you must:
-> 1. Modify the RDS instance settings in AWS to change the port from `5432` to `5435`.
-> 2. Update the RDS Security Group Inbound Rules to allow traffic on port `5435`.
+### 2. Staging (Testing)
+Used for validating changes before production.
+- **Frontend (HTTPS/CDN):** [https://d3d5zpzj4lgzr9.cloudfront.net](https://d3d5zpzj4lgzr9.cloudfront.net)
+- **Backend API (Direct):** `http://63.177.77.10:5005/api`
+- **Infrastructure:** S3 + CloudFront (Frontend), EC2 with Docker (Backend/DB).
 
-### 2. Run the Application
+### 3. Development (Local)
+Local environment for active development.
+- **Frontend:** [http://localhost:5173](http://localhost:5173)
+- **Backend:** [http://localhost:5002](http://localhost:5002)
+- **Database:** Local PostgreSQL on port `5432`.
 
-#### **Development (Local)**
-Points to your **local PostgreSQL** database.
+---
+
+## 🛠 Architecture & Networking
+
+### **CloudFront Reverse Proxy**
+To avoid **Mixed Content** errors (HTTPS frontend calling HTTP backend), both CloudFront distributions are configured as a reverse proxy:
+- Requests to `/api/*` on the CDN are automatically routed to the corresponding EC2 backend on port **5005**.
+- This allows the frontend to use relative paths (e.g., `fetch('/api/health')`).
+
+### **Backend Ports**
+| Service | Host Port | Container Port | Description |
+| :--- | :--- | :--- | :--- |
+| **Backend API** | `5005` | `5000` | Node.js Express server. |
+| **Database** | `5435` | `5432` | PostgreSQL (Docker). |
+
+---
+
+## 🚀 Deployment Usage
+
+### **1. Deploying Staging Frontend**
+Ensure `frontend/src/config.js` is set to `export const API_BASE_URL = '/api';`.
 ```bash
-npm run dev
+./deploy-s3.sh
 ```
-- **Backend:** `http://localhost:5002`
-- **Frontend:** `http://localhost:5173`
+*Note: This script builds the frontend and syncs it to the staging S3 bucket.*
 
-#### **Staging (Docker)**
-Points to the **AWS Staging RDS** on port **5435**.
+### **2. Launching Staging Backend**
 ```bash
-npm run staging
+./launch-staging-ec2.sh
 ```
-- **Frontend:** `http://localhost:80`
-- **Backend:** `http://localhost:5005` (exposed externally)
-- **Database:** `localhost:5435` (exposed if connecting via external tool)
+*Note: This script launches the EC2 instance, installs Docker, and starts the services.*
 
-#### **Production (Docker)**
-Points to the **AWS Production RDS** on port **5435**.
+### **3. Production Deployment**
+Production follows the same pattern but uses the production S3 bucket and EC2 instance. Ensure the CloudFront invalidation is run after updating S3 assets:
 ```bash
-npm run production
+aws cloudfront create-invalidation --distribution-id <PROD_DIST_ID> --paths "/*"
 ```
-- **Frontend:** `http://localhost:80`
-- **Backend:** `http://localhost:5005` (exposed externally)
-- **Database:** `localhost:5435` (exposed if connecting via external tool)
 
-### 3. Features
-- **Schedule:** View class schedules fetched from the database.
-- **Booking:** Real-time session booking.
-- **Courses:** Online yoga program enrollment.
-- **Inquiries:** Contact form messaging.
+---
+
+## 📂 Project Structure
+- `frontend/`: React + Vite application.
+- `backend/`: Node.js Express API.
+- `backend/src/db/init.sql`: Database schema and initial data.
+- `docker-compose.yml`: Local and Staging orchestration.
+- `docker-compose.prod.yml`: Production orchestration.
+
+---
+
+## 🧪 API Endpoints
+- `GET /api/health`: System health and DB connection status.
+- `GET /api/schedule`: Fetch class schedules.
+- `GET /api/programs`: Fetch yoga courses/packages.
+- `POST /api/bookings`: Create a new booking.
+- `POST /api/inquiries`: Submit a contact form inquiry.
+- `POST /api/admin/login`: Administrator authentication.
+- `GET /api/admin/dashboard`: Protected admin data (Bookings, Inquiries).
+
+---
+
+## 🔐 Access & Security
+- **SSH Access:** Requires `yoga-key.pem`.
+- **Admin Login:** Access the dashboard at `/admin` on the frontend.
+- **Security Groups:** 
+    - Port `22` (SSH), `5000`, `5005` (API), and `8080` (Direct Frontend) are open on EC2.
+    - CloudFront uses **Origin Access Control (OAC)** to securely fetch assets from private S3 buckets.
