@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-INSTANCE_NAME="yoga-backend-server"
+INSTANCE_NAME="yoga-prod-server"
 REGION="eu-central-1"
 KEY_NAME="yoga-key"
 AMI_ID="ami-0cf4768e2f1e520c5" # Verified Amazon Linux 2023 in eu-central-1
@@ -53,7 +53,7 @@ if [ -n "$INSTANCE_ID" ]; then
     echo "---------------------------------------------------"
     echo "EC2 Backend Server is Ready!"
     echo "Public IP: $PUBLIC_IP"
-    echo "SSH Command: ssh -i yoga-key.pem ec2-user@$PUBLIC_IP"
+    echo "SSH Command: ssh -i Yoga-Website/yoga-key.pem ec2-user@$PUBLIC_IP"
     echo "---------------------------------------------------"
 else
     echo "Failed to launch instance."
