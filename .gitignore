@@ -9,6 +9,7 @@ backend/node_modules/
 node_modules/
 
 # Environment variables (Critical for Security)
+.env*
 .env
 .env.local
 .env.production
