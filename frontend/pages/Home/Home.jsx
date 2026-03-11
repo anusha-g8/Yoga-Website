@@ -3,6 +3,7 @@ import Hero from '../../components/Home/Hero.jsx';
 import Testimonials from '../../components/Home/Testimonials.jsx';
 import Classes from '../../components/Home/Classes.jsx';
 import Newsletter from '../../components/Common/Newsletter.jsx';
+import InquirySection from '../../components/Common/InquirySection.jsx';
 import Footer from '../../components/Common/Footer.jsx';
 import './Home.css';
 
@@ -20,6 +21,7 @@ const Home = () => {
       </section>
       <Classes />
       <Testimonials />
+      <InquirySection />
       <Newsletter />
       <Footer />
     </main>

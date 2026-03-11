@@ -34,6 +34,11 @@ export const deleteSchedule = async (req, res) => {
     if (!deleted) return res.status(404).json({ message: 'Schedule item not found' });
     res.json({ message: 'Schedule item deleted', deleted });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting schedule', error: error.message });
+    console.error('Delete schedule error:', error);
+    res.status(500).json({ 
+      message: 'Error deleting schedule', 
+      error: error.message,
+      detail: error.detail // Postgres often provides details
+    });
   }
 };

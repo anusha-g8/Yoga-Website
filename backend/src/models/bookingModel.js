@@ -30,3 +30,8 @@ export const getAllBookings = async () => {
   `);
   return result.rows;
 };
+
+export const deleteBooking = async (id) => {
+  const result = await query('DELETE FROM bookings WHERE id = $1 RETURNING *', [id]);
+  return result.rows[0];
+};

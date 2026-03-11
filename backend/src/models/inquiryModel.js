@@ -8,3 +8,13 @@ export const createInquiry = async (inquiryData) => {
   );
   return result.rows[0];
 };
+
+export const getAllInquiries = async () => {
+  const result = await query('SELECT * FROM inquiries ORDER BY created_at DESC');
+  return result.rows;
+};
+
+export const deleteInquiry = async (id) => {
+  const result = await query('DELETE FROM inquiries WHERE id = $1 RETURNING *', [id]);
+  return result.rows[0];
+};

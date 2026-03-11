@@ -38,3 +38,13 @@ export const getBookings = async (req, res) => {
     res.status(500).json({ message: 'Error fetching bookings', error: error.message });
   }
 };
+
+export const deleteBooking = async (req, res) => {
+  try {
+    const deleted = await BookingModel.deleteBooking(req.params.id);
+    if (!deleted) return res.status(404).json({ message: 'Booking not found' });
+    res.json({ message: 'Booking deleted', deleted });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting booking', error: error.message });
+  }
+};
