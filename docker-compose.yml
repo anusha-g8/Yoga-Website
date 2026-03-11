@@ -39,8 +39,10 @@ services:
     build: ./frontend
     container_name: yoga-frontend
     restart: always
+    environment:
+      - BACKEND_HOST=backend
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       - backend
 
