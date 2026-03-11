@@ -6,7 +6,7 @@ const Navbar = () => {
     <nav className="navbar navbar-expand-md navbar-light bg-white shadow-sm">
       <div className="container">
         <Link className="navbar-brand d-flex align-items-center" to="/">
-          <img src="/dist/assets/images/Trishual.png" alt="Yoga with Anusha" className="navbar-logo" style={{ objectFit: 'contain' }} />
+          <img src="/assets/images/Trishual.png" alt="Yoga with Anusha" className="navbar-logo" style={{ objectFit: 'contain' }} />
           <div className="brand-text-container d-flex flex-column lh-1">
             <span className="brand-yoga">Yoga</span>
             <span className="brand-with-anusha">
