@@ -4,28 +4,50 @@ Full stack development project for yoga website.
 
 ## Getting Started
 
-### 1. Database Setup
-Ensure you have **PostgreSQL** installed and running on your machine.
-- Create a database named `yoga_db`.
-- Execute the SQL commands in `backend/src/db/init.sql` to create the tables and seed initial data.
-- The default credentials in `backend/.env` are:
-  - User: `postgres`
-  - Password: `postgres` (Update this file if your local setup is different)
-  - Port: `5432`
+### 1. Database Configuration
+The application points to different databases depending on the environment. **Note: Staging and Production require the database to listen on port 5435.**
+
+| Environment | Database Host | DB Port | SSL | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **Development** | `localhost` | **5432** | No | Your local PostgreSQL installation. |
+| **Staging** | `AWS RDS (Staging)` | **5435** | Yes | Shared AWS RDS instance. |
+| **Production** | `AWS RDS (Prod)` | **5435** | Yes | Dedicated AWS RDS (to be created). |
+
+> **⚠️ AWS Configuration Requirement:**
+> To use port **5435** in Staging/Production, you must:
+> 1. Modify the RDS instance settings in AWS to change the port from `5432` to `5435`.
+> 2. Update the RDS Security Group Inbound Rules to allow traffic on port `5435`.
 
 ### 2. Run the Application
-From the `Yoga-Website` directory, run:
+
+#### **Development (Local)**
+Points to your **local PostgreSQL** database.
 ```bash
 npm run dev
 ```
-This will start:
-- **Backend:** `http://localhost:5001`
+- **Backend:** `http://localhost:5002`
 - **Frontend:** `http://localhost:5173`
 
-The frontend uses a proxy to communicate with the backend via `/api`.
+#### **Staging (Docker)**
+Points to the **AWS Staging RDS** on port **5435**.
+```bash
+npm run staging
+```
+- **Frontend:** `http://localhost:80`
+- **Backend:** `http://localhost:5005` (exposed externally)
+- **Database:** `localhost:5435` (exposed if connecting via external tool)
+
+#### **Production (Docker)**
+Points to the **AWS Production RDS** on port **5435**.
+```bash
+npm run production
+```
+- **Frontend:** `http://localhost:80`
+- **Backend:** `http://localhost:5005` (exposed externally)
+- **Database:** `localhost:5435` (exposed if connecting via external tool)
 
 ### 3. Features
-- **Schedule:** View the class schedule fetched from the database on the Calendar page.
-- **Booking:** Click "Book Class" in the schedule to book a session.
-- **Courses:** Browse and enroll in online yoga programs on the Courses page.
-- **Inquiries:** Submit messages via the Contact page.
+- **Schedule:** View class schedules fetched from the database.
+- **Booking:** Real-time session booking.
+- **Courses:** Online yoga program enrollment.
+- **Inquiries:** Contact form messaging.

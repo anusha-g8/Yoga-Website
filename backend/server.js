@@ -1,8 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
-import { query } from './src/db/index.js';
+import { initDb, query } from './src/db/index.js';
 import programRoutes from './src/routes/programRoutes.js';
 import scheduleRoutes from './src/routes/scheduleRoutes.js';
 import bookingRoutes from './src/routes/bookingRoutes.js';
@@ -10,8 +12,6 @@ import inquiryRoutes from './src/routes/inquiryRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
-dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,14 +39,36 @@ app.use('/api/admin', adminRoutes);
 app.get('/api/health', async (req, res) => {
   try {
     const result = await query('SELECT NOW()');
-    res.json({ status: 'OK', dbTime: result.rows[0].now });
+    res.json({ 
+      status: 'OK', 
+      dbTime: result.rows[0].now,
+      env: process.env.NODE_ENV || 'development',
+      dbConfig: {
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        database: process.env.DB_NAME,
+        user: process.env.DB_USER
+      }
+    });
   } catch (err) {
-    res.status(500).json({ status: 'Error', message: 'Database connection failed', error: err.message });
+    console.error('Health check failed:', err);
+    res.status(500).json({ 
+      status: 'Error', 
+      message: 'Database connection failed', 
+      error: err.message,
+      code: err.code,
+      config: {
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        database: process.env.DB_NAME,
+        user: process.env.DB_USER
+      }
+    });
   }
 });
 
-// Serve frontend static files in production
-if (process.env.NODE_ENV === 'production') {
+// Serve frontend static files in production or staging
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
   const frontendPath = path.join(__dirname, '../frontend/dist');
   app.use(express.static(frontendPath));
   
@@ -55,6 +77,8 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
+  // Initialize database tables
+  await initDb();
 });

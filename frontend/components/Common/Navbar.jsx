@@ -5,17 +5,15 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white shadow-sm">
       <div className="container">
-        <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
-          <img src="/assets/images/Trishual.png" alt="" height="64" style={{ objectFit: 'contain' }} />
-          <svg
-            width="132" height="64" viewBox="0 0 132 64"
-            fill="none" xmlns="http://www.w3.org/2000/svg"
-            aria-label="Yoga with Anusha" role="img"
-          >
-            <text x="0" y="36" style={{ fontFamily: "'Great Vibes', cursive", fontSize: '44px', fill: '#2c2420' }}>Yoga</text>
-            <line x1="0" y1="46" x2="128" y2="46" stroke="#2c2420" strokeWidth="0.5"/>
-            <text x="0" y="58" style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '9.5px', fontWeight: 300, letterSpacing: '3px', fill: '#2c2420' }}>WITH ANUSHA</text>
-          </svg>
+        <Link className="navbar-brand d-flex align-items-center" to="/">
+          <img src="/dist/assets/images/Trishual.png" alt="Yoga with Anusha" className="navbar-logo" style={{ objectFit: 'contain' }} />
+          <div className="brand-text-container d-flex flex-column lh-1">
+            <span className="brand-yoga">Yoga</span>
+            <span className="brand-with-anusha">
+              <span className="brand-with">with</span>
+              <span className="brand-anusha ms-1">Anusha</span>
+            </span>
+          </div>
         </Link>
         <button
           className="navbar-toggler"

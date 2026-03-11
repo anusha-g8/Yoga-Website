@@ -28,7 +28,7 @@ const Layout = ({ children }) => {
       <Navbar />
       <main style={mainStyle}>{children}</main>
       <footer style={footerStyle}>
-        © {new Date().getFullYear()} Anusha Yoga — All rights reserved.
+        © {new Date().getFullYear()} Yoga with Anusha — All rights reserved.
       </footer>
     </div>
   );

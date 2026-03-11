@@ -6,6 +6,7 @@ const AdminDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [schedule, setSchedule] = useState([]);
   const [programs, setPrograms] = useState([]);
+  const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -24,17 +25,23 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [bookingsRes, scheduleRes, programsRes] = await Promise.all([
+      const [bookingsRes, scheduleRes, programsRes, inquiriesRes] = await Promise.all([
         fetch('/api/bookings'),
         fetch('/api/schedule'),
-        fetch('/api/programs')
+        fetch('/api/programs'),
+        fetch('/api/inquiries')
       ]);
+      
       const bookingsData = await bookingsRes.json();
       const scheduleData = await scheduleRes.json();
       const programsData = await programsRes.json();
-      setBookings(bookingsData);
-      setSchedule(scheduleData);
-      setPrograms(programsData);
+      const inquiriesData = await inquiriesRes.json();
+      
+      setBookings(Array.isArray(bookingsData) ? bookingsData : []);
+      setSchedule(Array.isArray(scheduleData) ? scheduleData : []);
+      setPrograms(Array.isArray(programsData) ? programsData : []);
+      setInquiries(Array.isArray(inquiriesData) ? inquiriesData : []);
+      
       setLoading(false);
     } catch (err) {
       console.error('Error fetching admin data:', err);
@@ -49,29 +56,75 @@ const AdminDashboard = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
       });
-      if (response.ok) fetchData();
+      if (response.ok) {
+        fetchData();
+      } else {
+        alert('Failed to update status');
+      }
     } catch (err) {
       console.error('Error updating status:', err);
     }
   };
 
+  const handleDeleteBooking = async (id) => {
+    if (!window.confirm('Delete this booking record?')) return;
+    try {
+      const response = await fetch(`/api/bookings/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        alert('Booking deleted successfully');
+        fetchData();
+      } else {
+        alert('Failed to delete booking');
+      }
+    } catch (err) {
+      console.error('Error deleting booking:', err);
+    }
+  };
+
   const handleDeleteSchedule = async (id) => {
-    if (!window.confirm('Delete this class?')) return;
+    if (!window.confirm('Delete this class? This will also delete associated bookings.')) return;
     try {
       const response = await fetch(`/api/schedule/${id}`, { method: 'DELETE' });
-      if (response.ok) fetchData();
+      if (response.ok) {
+        alert('Schedule item deleted successfully');
+        fetchData();
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to delete schedule: ${errorData.message}\nError: ${errorData.error || 'Unknown'}\nDetail: ${errorData.detail || 'None'}`);
+      }
     } catch (err) {
       console.error('Error deleting schedule:', err);
+      alert('Error connecting to the server: ' + err.message);
     }
   };
 
   const handleDeleteProgram = async (id) => {
-    if (!window.confirm('Delete this program?')) return;
+    if (!window.confirm('Delete this program? This will also delete associated bookings.')) return;
     try {
       const response = await fetch(`/api/programs/${id}`, { method: 'DELETE' });
-      if (response.ok) fetchData();
+      if (response.ok) {
+        alert('Program deleted successfully');
+        fetchData();
+      } else {
+        alert('Failed to delete program');
+      }
     } catch (err) {
       console.error('Error deleting program:', err);
+    }
+  };
+
+  const handleDeleteInquiry = async (id) => {
+    if (!window.confirm('Delete this inquiry?')) return;
+    try {
+      const response = await fetch(`/api/inquiries/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        alert('Inquiry deleted successfully');
+        fetchData();
+      } else {
+        alert('Failed to delete inquiry');
+      }
+    } catch (err) {
+      console.error('Error deleting inquiry:', err);
     }
   };
 
@@ -133,6 +186,9 @@ const AdminDashboard = () => {
         <li className="nav-item">
           <button className={`nav-link ${activeTab === 'programs' ? 'active' : ''}`} onClick={() => setActiveTab('programs')}>Programs</button>
         </li>
+        <li className="nav-item">
+          <button className={`nav-link ${activeTab === 'inquiries' ? 'active' : ''}`} onClick={() => setActiveTab('inquiries')}>Inquiries</button>
+        </li>
       </ul>
 
       {/* Bookings Tab */}
@@ -165,12 +221,15 @@ const AdminDashboard = () => {
                     </span>
                   </td>
                   <td>
-                    {b.status === 'pending' && (
-                      <div className="btn-group">
-                        <button className="btn btn-sm btn-success me-2" onClick={() => handleUpdateStatus(b.id, 'confirmed')}>Accept</button>
-                        <button className="btn btn-sm btn-danger" onClick={() => handleUpdateStatus(b.id, 'declined')}>Decline</button>
-                      </div>
-                    )}
+                    <div className="btn-group">
+                      {b.status === 'pending' && (
+                        <>
+                          <button className="btn btn-sm btn-success me-2" onClick={() => handleUpdateStatus(b.id, 'confirmed')}>Accept</button>
+                          <button className="btn btn-sm btn-danger me-2" onClick={() => handleUpdateStatus(b.id, 'declined')}>Decline</button>
+                        </>
+                      )}
+                      <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteBooking(b.id)}>Delete</button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -284,6 +343,36 @@ const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {/* Inquiries Tab */}
+      {activeTab === 'inquiries' && (
+        <div className="table-responsive">
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {inquiries.map((i) => (
+                <tr key={i.id}>
+                  <td>{new Date(i.created_at).toLocaleDateString()}</td>
+                  <td>{i.user_name}</td>
+                  <td>{i.user_email}</td>
+                  <td>{i.message}</td>
+                  <td>
+                    <button className="btn btn-sm btn-danger" onClick={() => handleDeleteInquiry(i.id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
