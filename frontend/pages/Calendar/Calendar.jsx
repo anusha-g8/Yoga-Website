@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../src/config';
 import React, { useState, useEffect } from 'react';
 
 const Calendar = () => {
@@ -6,7 +7,7 @@ const Calendar = () => {
   const [bookingStatus, setBookingStatus] = useState({ type: '', message: '' });
 
   useEffect(() => {
-    fetch('/api/schedule')
+    fetch(`${API_BASE_URL}/schedule`)
       .then(async res => {
         if (!res.ok) {
           let errorDetail = '';
@@ -33,7 +34,8 @@ const Calendar = () => {
         console.error('Error fetching schedule:', err);
         setBookingStatus({ 
           type: 'error', 
-          message: `Failed to load schedule: ${err.message}. Please check database connection in staging.` 
+          message: `Failed to load schedule: ${err.message}. Please check database connection.`
+ 
         });
         setLoading(false);
       });
@@ -47,7 +49,7 @@ const Calendar = () => {
     if (!userName || !userEmail) return;
 
     try {
-      const response = await fetch('/api/bookings', {
+      const response = await fetch(`${API_BASE_URL}/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_name: userName, user_email: userEmail, class_id: classId })

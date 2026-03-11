@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../src/config';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,10 +27,10 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       const [bookingsRes, scheduleRes, programsRes, inquiriesRes] = await Promise.all([
-        fetch('/api/bookings'),
-        fetch('/api/schedule'),
-        fetch('/api/programs'),
-        fetch('/api/inquiries')
+        fetch(`${API_BASE_URL}/bookings`),
+        fetch(`${API_BASE_URL}/schedule`),
+        fetch(`${API_BASE_URL}/programs`),
+        fetch(`${API_BASE_URL}/inquiries`)
       ]);
       
       const bookingsData = await bookingsRes.json();
@@ -51,7 +52,7 @@ const AdminDashboard = () => {
 
   const handleUpdateStatus = async (id, status) => {
     try {
-      const response = await fetch(`/api/bookings/${id}/status`, {
+      const response = await fetch(`${API_BASE_URL}/bookings/${id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
@@ -69,7 +70,7 @@ const AdminDashboard = () => {
   const handleDeleteBooking = async (id) => {
     if (!window.confirm('Delete this booking record?')) return;
     try {
-      const response = await fetch(`/api/bookings/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/bookings/${id}`, { method: 'DELETE' });
       if (response.ok) {
         alert('Booking deleted successfully');
         fetchData();
@@ -84,7 +85,7 @@ const AdminDashboard = () => {
   const handleDeleteSchedule = async (id) => {
     if (!window.confirm('Delete this class? This will also delete associated bookings.')) return;
     try {
-      const response = await fetch(`/api/schedule/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/schedule/${id}`, { method: 'DELETE' });
       if (response.ok) {
         alert('Schedule item deleted successfully');
         fetchData();
@@ -101,7 +102,7 @@ const AdminDashboard = () => {
   const handleDeleteProgram = async (id) => {
     if (!window.confirm('Delete this program? This will also delete associated bookings.')) return;
     try {
-      const response = await fetch(`/api/programs/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/programs/${id}`, { method: 'DELETE' });
       if (response.ok) {
         alert('Program deleted successfully');
         fetchData();
@@ -116,7 +117,7 @@ const AdminDashboard = () => {
   const handleDeleteInquiry = async (id) => {
     if (!window.confirm('Delete this inquiry?')) return;
     try {
-      const response = await fetch(`/api/inquiries/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/inquiries/${id}`, { method: 'DELETE' });
       if (response.ok) {
         alert('Inquiry deleted successfully');
         fetchData();
@@ -131,7 +132,7 @@ const AdminDashboard = () => {
   const handleScheduleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/schedule', {
+      const response = await fetch(`${API_BASE_URL}/schedule`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(scheduleForm)
@@ -148,7 +149,7 @@ const AdminDashboard = () => {
   const handleProgramSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/programs', {
+      const response = await fetch(`${API_BASE_URL}/programs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(programForm)

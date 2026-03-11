@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../src/config';
 import React, { useState, useEffect } from 'react';
 
 const Courses = () => {
@@ -6,7 +7,7 @@ const Courses = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/api/programs')
+    fetch(`${API_BASE_URL}/programs`)
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -27,16 +28,16 @@ const Courses = () => {
         setError('Failed to load courses. Please check if the backend is running.');
         setLoading(false);
       });
-  }, []);
+    }, []);
 
-  const handleEnroll = async (programId) => {
+    const handleEnroll = async (programId) => {
     const userName = prompt('Enter your name:');
     const userEmail = prompt('Enter your email:');
 
     if (!userName || !userEmail) return;
 
     try {
-      const response = await fetch('/api/bookings', {
+      const response = await fetch(`${API_BASE_URL}/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_name: userName, user_email: userEmail, program_id: programId })

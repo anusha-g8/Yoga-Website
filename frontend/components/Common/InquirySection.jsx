@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../src/config';
 import React, { useState } from 'react';
 
 const InquirySection = () => {
@@ -15,7 +16,7 @@ const InquirySection = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/inquiries', {
+      const response = await fetch(`${API_BASE_URL}/inquiries`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

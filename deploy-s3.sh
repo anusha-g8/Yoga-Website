@@ -15,7 +15,7 @@ aws s3api create-bucket \
 # 2. Disable "Block all public access" (Required for static hosting)
 aws s3api put-public-access-block \
     --bucket $BUCKET_NAME \
-    --public-access-block-configuration "BlockPublicAcl=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false"
+    --public-access-block-configuration "BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false"
 
 # 3. Enable static website hosting
 aws s3api put-bucket-website \
