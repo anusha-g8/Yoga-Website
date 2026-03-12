@@ -41,12 +41,10 @@ INSTANCE_ID=$(aws ec2 run-instances \
     --security-group-ids $SG_ID \
     --user-data "#!/bin/bash
                  dnf update -y
-                 dnf install -y docker git
+                 dnf install -y docker git docker-compose-plugin
                  systemctl start docker
                  systemctl enable docker
-                 usermod -aG docker ec2-user
-                 curl -L \"https://github.com/docker/compose/releases/latest/download/docker-compose-\$(uname -s)-\$(uname -m)\" -o /usr/local/bin/docker-compose
-                 chmod +x /usr/local/bin/docker-compose" \
+                 usermod -aG docker ec2-user" \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$INSTANCE_NAME}]" \
     --query 'Instances[0].InstanceId' --output text \
     --region $REGION)
@@ -70,7 +68,7 @@ if [ -n "$INSTANCE_ID" ]; then
     sleep 30
     
     # Create app directory on the instance
-    ssh -i $KEY_NAME.pem -o StrictHostKeyChecking=no ec2-user@$PUBLIC_IP "mkdir -p ~/app"
+    ssh -i $KEY_NAME.pem -o StrictHostKeyChecking=no ec2-user@$PUBLIC_IP "mkdir -p ~/app/Yoga-Website"
     
     # Copy files to the instance (excluding node_modules)
     echo "Uploading code to EC2..."
@@ -79,12 +77,11 @@ if [ -n "$INSTANCE_ID" ]; then
         --exclude '.git' \
         --exclude 'frontend/node_modules' \
         --exclude 'backend/node_modules' \
-        ./ ec2-user@$PUBLIC_IP:~/app/
+        ./ ec2-user@$PUBLIC_IP:~/app/Yoga-Website/
     
-    # Deploy using docker-compose
+    # Deploy using docker compose
     echo "Starting services on EC2..."
-    ssh -i $KEY_NAME.pem -o StrictHostKeyChecking=no ec2-user@$PUBLIC_IP "cd ~/app && docker-compose --env-file .env.staging up -d --build" || \
-    ssh -i $KEY_NAME.pem -o StrictHostKeyChecking=no ec2-user@$PUBLIC_IP "cd ~/app && sudo docker compose --env-file .env.staging up -d --build"
+    ssh -i $KEY_NAME.pem -o StrictHostKeyChecking=no ec2-user@$PUBLIC_IP "cd ~/app/Yoga-Website && sudo docker compose --env-file .env.staging up -d --build"
     
     echo "---------------------------------------------------"
     echo "Staging Deployment Complete!"

@@ -59,9 +59,24 @@ Ensure `frontend/src/config.js` is set to `export const API_BASE_URL = '/api';`.
 
 ### **3. Production Deployment**
 Production follows the same pattern but uses the production S3 bucket and EC2 instance. Ensure the CloudFront invalidation is run after updating S3 assets:
+
+**Production Distribution ID:** `ES9DPFOPHEKAB`
+**Staging Distribution ID:** `E1G4QABQ4NVDHE`
+
+Run the invalidation (replace with the appropriate ID):
 ```bash
-aws cloudfront create-invalidation --distribution-id <PROD_DIST_ID> --paths "/*"
+# For Production
+aws cloudfront create-invalidation --distribution-id ES9DPFOPHEKAB --paths "/*"
+
+# For Staging
+aws cloudfront create-invalidation --distribution-id E1G4QABQ4NVDHE --paths "/*"
 ```
+
+> [!CAUTION]
+> **NoSuchDistribution Error?**
+> If you get this error in your GitHub Actions, double-check your Secrets. Ensure you are using the **ID** (like `ES9DPFOPHEKAB`) and **NOT** the domain name (like `d2wyh3p9dtg0ey.cloudfront.net`). Also, make sure there are no extra spaces or hidden characters in your secret.
+
+*Note: The distribution ID is different from the .cloudfront.net domain name.*
 
 ---
 

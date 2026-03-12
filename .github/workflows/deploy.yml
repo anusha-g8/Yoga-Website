@@ -60,13 +60,17 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            mkdir -p ~/app
             cd ~/app
+            if [ ! -d "Yoga-Website" ]; then
+              git clone https://github.com/anusha-g8/Yoga-Website.git
+            fi
+            cd Yoga-Website
+            git fetch origin
+            git checkout staging
             git pull origin staging
-            # Update API_BASE_URL for the backend build if needed
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
-            sudo docker build -t app-backend ./backend
-            sudo docker build -t app-frontend ./frontend
-            sudo /usr/local/bin/docker-compose --env-file .env.staging up -d --build
+            sudo docker compose --env-file .env.staging up -d --build
 
   deploy-production:
     needs: test
@@ -104,11 +108,16 @@ jobs:
         with:
           host: ${{ secrets.PROD_EC2_IP }}
           username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ secrets.PROD_EC2_IP }}
           script: |
+            mkdir -p ~/app
             cd ~/app
+            if [ ! -d "Yoga-Website" ]; then
+              git clone https://github.com/anusha-g8/Yoga-Website.git
+            fi
+            cd Yoga-Website
+            git fetch origin
+            git checkout main
             git pull origin main
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
-            sudo docker build -t app-backend ./backend
-            sudo docker build -t app-frontend ./frontend
-            sudo /usr/local/bin/docker-compose --env-file .env.prod up -d --build
+            sudo docker compose --env-file .env.prod up -d --build

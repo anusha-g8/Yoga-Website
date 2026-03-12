@@ -37,7 +37,7 @@ INSTANCE_ID=$(aws ec2 run-instances \
     --security-group-ids $SG_ID \
     --user-data "#!/bin/bash
                  dnf update -y
-                 dnf install -y docker
+                 dnf install -y docker docker-compose-plugin
                  systemctl start docker
                  systemctl enable docker
                  usermod -aG docker ec2-user" \
