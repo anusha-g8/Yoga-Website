@@ -118,6 +118,27 @@ Verifies the full application stack in a real browser.
 
 ---
 
+## 🛡️ Security
+
+The application implements several security layers to protect user data and ensure privacy.
+
+### **1. HTTPS Enforcement**
+- **CloudFront Level:** All HTTP traffic is automatically redirected to HTTPS at the edge.
+- **Application Level:** The backend uses custom middleware to detect the `X-Forwarded-Proto` header from CloudFront. If a request is insecure, it is redirected to the `https://` version of the URL.
+
+### **2. Security Headers (Helmet)**
+The backend integrates `helmet` middleware to set various HTTP headers for protection:
+- **HSTS:** Ensures the browser only communicates over HTTPS.
+- **No-Sniff:** Prevents browsers from MIME-sniffing a response away from the declared content-type.
+- **Frameguard:** Helps prevent clickjacking attacks by setting `X-Frame-Options`.
+- **XSS Filter:** Adds a small layer of protection against cross-site scripting.
+
+### **3. Infrastructure Security**
+- **OAC (Origin Access Control):** The S3 bucket is private; only CloudFront can access it.
+- **Network Isolation:** The database is only reachable from the backend container or via an encrypted SSH tunnel.
+
+---
+
 ## 📂 Project Structure
 - `frontend/`: React + Vite application.
 - `backend/`: Node.js Express API.

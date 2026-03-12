@@ -4,6 +4,7 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import helmet from 'helmet';
 import { initDb, query } from './src/db/index.js';
 import programRoutes from './src/routes/programRoutes.js';
 import scheduleRoutes from './src/routes/scheduleRoutes.js';
@@ -19,7 +20,24 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust CloudFront proxy for HTTPS headers
+app.set('trust proxy', 1);
+
 // Middleware
+app.use(helmet({
+  contentSecurityPolicy: false,
+}));
+
+// Enforce HTTPS
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(`https://${req.hostname}${req.url}`);
+    }
+  }
+  next();
+});
+
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
