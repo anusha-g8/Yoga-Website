@@ -12,7 +12,7 @@ describe('Navbar', () => {
     );
 
   // brand is image with alt text
-  expect(screen.getByLabelText(/Yoga with Anusha/i)).toBeInTheDocument();
+  expect(screen.getByAltText(/Yoga with Anusha/i)).toBeInTheDocument();
   // main nav links
   expect(screen.getByText(/About/i)).toBeInTheDocument();
   expect(screen.getByText(/Courses/i)).toBeInTheDocument();
