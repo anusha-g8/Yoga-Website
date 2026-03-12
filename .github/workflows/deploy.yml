@@ -69,6 +69,8 @@ jobs:
             git fetch origin
             git checkout staging
             git pull origin staging
+            # Create empty .env.staging if it doesn't exist to prevent docker errors
+            touch .env.staging
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
             sudo docker compose --env-file .env.staging up -d --build
 
@@ -108,7 +110,7 @@ jobs:
         with:
           host: ${{ secrets.PROD_EC2_IP }}
           username: ec2-user
-          key: ${{ secrets.PROD_EC2_IP }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             mkdir -p ~/app
             cd ~/app
@@ -119,5 +121,7 @@ jobs:
             git fetch origin
             git checkout main
             git pull origin main
+            # Create empty .env.prod if it doesn't exist
+            touch .env.prod
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
             sudo docker compose --env-file .env.prod up -d --build
