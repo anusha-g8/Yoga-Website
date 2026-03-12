@@ -64,8 +64,16 @@ jobs:
             if ! command -v git &> /dev/null; then
               sudo dnf update -y && sudo dnf install -y git
             fi
+            
+            # Install Docker Compose Plugin (Robust method for AL2023)
             if ! docker compose version &> /dev/null; then
-              sudo dnf install -y docker-compose-plugin
+              echo "Attempting to install docker-compose-plugin via dnf..."
+              sudo dnf install -y docker-compose-plugin || {
+                echo "dnf install failed. Manually installing docker-compose binary..."
+                sudo mkdir -p /usr/libexec/docker/cli-plugins
+                sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
+                sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
+              }
             fi
 
             # 2. Sync Repository
@@ -126,8 +134,16 @@ jobs:
             if ! command -v git &> /dev/null; then
               sudo dnf update -y && sudo dnf install -y git
             fi
+            
+            # Install Docker Compose Plugin (Robust method for AL2023)
             if ! docker compose version &> /dev/null; then
-              sudo dnf install -y docker-compose-plugin
+              echo "Attempting to install docker-compose-plugin via dnf..."
+              sudo dnf install -y docker-compose-plugin || {
+                echo "dnf install failed. Manually installing docker-compose binary..."
+                sudo mkdir -p /usr/libexec/docker/cli-plugins
+                sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
+                sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
+              }
             fi
 
             # 2. Sync Repository
