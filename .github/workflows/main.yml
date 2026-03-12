@@ -65,27 +65,24 @@ jobs:
               sudo dnf update -y && sudo dnf install -y git
             fi
             
-            # Install Docker Compose Plugin (Robust method for AL2023)
             if ! docker compose version &> /dev/null; then
-              echo "Attempting to install docker-compose-plugin via dnf..."
               sudo dnf install -y docker-compose-plugin || {
-                echo "dnf install failed. Manually installing docker-compose binary..."
                 sudo mkdir -p /usr/libexec/docker/cli-plugins
                 sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
                 sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
               }
             fi
 
-            # 2. Sync Repository
+            # 2. Sync Repository (Force state to match origin)
             mkdir -p ~/app
             cd ~/app
             if [ ! -d "Yoga-Website" ]; then
               git clone https://github.com/anusha-g8/Yoga-Website.git
             fi
             cd Yoga-Website
-            git fetch origin
-            git checkout staging
-            git pull origin staging
+            git fetch origin staging
+            git checkout -f staging
+            git reset --hard origin/staging
 
             # 3. Environment and Deployment
             touch .env.staging
@@ -135,27 +132,24 @@ jobs:
               sudo dnf update -y && sudo dnf install -y git
             fi
             
-            # Install Docker Compose Plugin (Robust method for AL2023)
             if ! docker compose version &> /dev/null; then
-              echo "Attempting to install docker-compose-plugin via dnf..."
               sudo dnf install -y docker-compose-plugin || {
-                echo "dnf install failed. Manually installing docker-compose binary..."
                 sudo mkdir -p /usr/libexec/docker/cli-plugins
                 sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
                 sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
               }
             fi
 
-            # 2. Sync Repository
+            # 2. Sync Repository (Force state to match origin)
             mkdir -p ~/app
             cd ~/app
             if [ ! -d "Yoga-Website" ]; then
               git clone https://github.com/anusha-g8/Yoga-Website.git
             fi
             cd Yoga-Website
-            git fetch origin
-            git checkout main
-            git pull origin main
+            git fetch origin main
+            git checkout -f main
+            git reset --hard origin/main
 
             # 3. Environment and Deployment
             touch .env.prod
