@@ -60,6 +60,15 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # 1. Ensure tools are installed
+            if ! command -v git &> /dev/null; then
+              sudo dnf update -y && sudo dnf install -y git
+            fi
+            if ! docker compose version &> /dev/null; then
+              sudo dnf install -y docker-compose-plugin
+            fi
+
+            # 2. Sync Repository
             mkdir -p ~/app
             cd ~/app
             if [ ! -d "Yoga-Website" ]; then
@@ -69,7 +78,8 @@ jobs:
             git fetch origin
             git checkout staging
             git pull origin staging
-            # Create empty .env.staging if it doesn't exist to prevent docker errors
+
+            # 3. Environment and Deployment
             touch .env.staging
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
             sudo docker compose --env-file .env.staging up -d --build
@@ -112,6 +122,15 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # 1. Ensure tools are installed
+            if ! command -v git &> /dev/null; then
+              sudo dnf update -y && sudo dnf install -y git
+            fi
+            if ! docker compose version &> /dev/null; then
+              sudo dnf install -y docker-compose-plugin
+            fi
+
+            # 2. Sync Repository
             mkdir -p ~/app
             cd ~/app
             if [ ! -d "Yoga-Website" ]; then
@@ -121,7 +140,8 @@ jobs:
             git fetch origin
             git checkout main
             git pull origin main
-            # Create empty .env.prod if it doesn't exist
+
+            # 3. Environment and Deployment
             touch .env.prod
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
             sudo docker compose --env-file .env.prod up -d --build
