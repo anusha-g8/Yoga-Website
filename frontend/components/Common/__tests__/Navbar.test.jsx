@@ -11,8 +11,8 @@ describe('Navbar', () => {
       </MemoryRouter>
     );
 
-  // brand is inlined SVG with accessible name
-  expect(screen.getByLabelText(/Yoga with Anusha/i)).toBeInTheDocument();
+  // brand is image with alt text
+  expect(screen.getByAltText(/Yoga with Anusha/i)).toBeInTheDocument();
   // main nav links
   expect(screen.getByText(/About/i)).toBeInTheDocument();
   expect(screen.getByText(/Courses/i)).toBeInTheDocument();
