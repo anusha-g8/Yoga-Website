@@ -56,6 +56,10 @@ jobs:
         run: |
           aws s3 sync Yoga-Website/frontend/dist/ s3://${{ secrets.STAGING_S3_BUCKET }} --delete
 
+      - name: Invalidate CloudFront (Staging)
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.STAGING_CLOUDFRONT_ID }} --paths "/*"
+
       # 2. Backend Deploy to EC2
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@master
@@ -116,6 +120,10 @@ jobs:
       - name: Sync S3
         run: |
           aws s3 sync Yoga-Website/frontend/dist/ s3://${{ secrets.PROD_S3_BUCKET }} --delete
+
+      - name: Invalidate CloudFront (Production)
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.PROD_CLOUDFRONT_ID }} --paths "/*"
 
       # 2. Backend Deploy to EC2
       - name: Deploy to EC2 via SSH
