@@ -2,7 +2,7 @@ name: Yoga Website CI/CD
 
 on:
   push:
-    branches: [ main, staging, unit-test-cases ]
+    branches: [ main, staging ]
 
 jobs:
   test:
