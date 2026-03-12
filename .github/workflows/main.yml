@@ -15,11 +15,11 @@ jobs:
           node-version: '20'
       
       - name: Install Frontend Dependencies
-        working-directory: Yoga-Website/frontend
+        working-directory: frontend
         run: npm install
         
       - name: Run Frontend Tests
-        working-directory: Yoga-Website/frontend
+        working-directory: frontend
         run: npm test -- --run
 
   deploy-staging:
@@ -38,7 +38,7 @@ jobs:
 
       # 1. Frontend Build & Deploy to S3
       - name: Build Frontend
-        working-directory: Yoga-Website/frontend
+        working-directory: frontend
         run: |
           echo "export const API_BASE_URL = '/api';" > src/config.js
           npm install
@@ -46,7 +46,7 @@ jobs:
           
       - name: Sync S3
         run: |
-          aws s3 sync Yoga-Website/frontend/dist/ s3://${{ secrets.STAGING_S3_BUCKET }} --delete
+          aws s3 sync frontend/dist/ s3://${{ secrets.STAGING_S3_BUCKET }} --delete
 
       - name: Invalidate CloudFront
         run: |
@@ -62,7 +62,6 @@ jobs:
           script: |
             cd ~/app
             git pull origin staging
-            # Update API_BASE_URL for the backend build if needed
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
             sudo docker build -t app-backend ./backend
             sudo docker build -t app-frontend ./frontend
@@ -84,7 +83,7 @@ jobs:
 
       # 1. Frontend Build & Deploy to S3
       - name: Build Frontend
-        working-directory: Yoga-Website/frontend
+        working-directory: frontend
         run: |
           echo "export const API_BASE_URL = '/api';" > src/config.js
           npm install
@@ -92,7 +91,7 @@ jobs:
           
       - name: Sync S3
         run: |
-          aws s3 sync Yoga-Website/frontend/dist/ s3://${{ secrets.PROD_S3_BUCKET }} --delete
+          aws s3 sync frontend/dist/ s3://${{ secrets.PROD_S3_BUCKET }} --delete
 
       - name: Invalidate CloudFront
         run: |
