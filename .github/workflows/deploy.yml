@@ -61,22 +61,20 @@ jobs:
             
             # Force install latest Docker Plugins (Compose + Buildx)
             sudo mkdir -p /usr/libexec/docker/cli-plugins
-            
-            echo "Installing latest Docker Compose..."
             sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
             sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
-            
-            echo "Installing latest Docker Buildx..."
             sudo curl -SL https://github.com/docker/buildx/releases/download/v0.17.1/buildx-v0.17.1.linux-$(uname -m | sed 's/x86_64/amd64/') -o /usr/libexec/docker/cli-plugins/docker-buildx
             sudo chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
 
-            # 2. Sync Repository
+            # 2. Sync Repository (with safety for stale lock files)
             mkdir -p ~/app
             cd ~/app
             if [ ! -d "Yoga-Website" ]; then
               git clone https://github.com/anusha-g8/Yoga-Website.git
             fi
             cd Yoga-Website
+            # Remove stale git lock file if it exists
+            rm -f .git/index.lock
             git fetch --all
             git checkout -f staging
             git reset --hard origin/staging
@@ -125,22 +123,20 @@ jobs:
             
             # Force install latest Docker Plugins (Compose + Buildx)
             sudo mkdir -p /usr/libexec/docker/cli-plugins
-            
-            echo "Installing latest Docker Compose..."
             sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
             sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
-            
-            echo "Installing latest Docker Buildx..."
             sudo curl -SL https://github.com/docker/buildx/releases/download/v0.17.1/buildx-v0.17.1.linux-$(uname -m | sed 's/x86_64/amd64/') -o /usr/libexec/docker/cli-plugins/docker-buildx
             sudo chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
 
-            # 2. Sync Repository
+            # 2. Sync Repository (with safety for stale lock files)
             mkdir -p ~/app
             cd ~/app
             if [ ! -d "Yoga-Website" ]; then
               git clone https://github.com/anusha-g8/Yoga-Website.git
             fi
             cd Yoga-Website
+            # Remove stale git lock file if it exists
+            rm -f .git/index.lock
             git fetch --all
             git checkout -f main
             git reset --hard origin/main
