@@ -80,6 +80,44 @@ aws cloudfront create-invalidation --distribution-id E1G4QABQ4NVDHE --paths "/*"
 
 ---
 
+## 🧪 Testing
+
+The project includes a comprehensive testing suite covering frontend and backend at multiple levels.
+
+### **1. Unit Tests**
+Verifies individual components and logic in isolation.
+- **Frontend:** Uses Vitest + React Testing Library.
+  ```bash
+  cd frontend && npm test
+  ```
+- **Backend:** Uses Vitest + Supertest (with DB mocks).
+  ```bash
+  cd backend && npm test
+  ```
+
+### **2. Integration Tests**
+Verifies that different parts of the system work together (e.g., API Routes -> Models).
+- **Backend Integration:** Located in `backend/src/__tests__/integration`.
+  ```bash
+  cd backend && npm test src/__tests__/integration
+  ```
+- **User Journey Tests:** Verifies frontend routing and functional flows.
+  ```bash
+  cd frontend && npm test src/__tests__/UserJourneys.test.jsx
+  ```
+
+### **3. End-to-End (E2E) Tests**
+Verifies the full application stack in a real browser.
+- **Tool:** Cypress.
+- **Requirement:** Local frontend and backend servers must be running.
+  ```bash
+  cd frontend
+  npm run cypress:open  # Open interactive UI
+  npm run cypress:run   # Run headlessly in CLI
+  ```
+
+---
+
 ## 📂 Project Structure
 - `frontend/`: React + Vite application.
 - `backend/`: Node.js Express API.
