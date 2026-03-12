@@ -77,8 +77,12 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')
   });
 }
 
-app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`);
-  // Initialize database tables
-  await initDb();
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, async () => {
+    console.log(`Server is running on port ${PORT}`);
+    // Initialize database tables
+    await initDb();
+  });
+}
+
+export default app;
