@@ -1,0 +1,23 @@
+.classes-section { padding: 36px 0; }
+
+.card {
+  border-radius: 10px;
+}
+
+.card-img-top {
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .card-img-top { height: 140px; }
+}
+
+.card-body { padding: 16px; }
+
+.btn-outline-primary {
+  border-color: var(--lav-300);
+  color: var(--lav-600);
+}

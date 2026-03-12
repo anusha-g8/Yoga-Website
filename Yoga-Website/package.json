@@ -1,0 +1,32 @@
+{
+  "name": "yoga-website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "NODE_ENV=dev concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "staging": "docker compose --env-file .env.staging up -d --build",
+    "production": "env -i PATH=\"$PATH\" HOME=\"$HOME\" docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build",
+    "prod": "npm run production",
+    "deploy:frontend": "chmod +x deploy-s3.sh && ./deploy-s3.sh",
+    "deploy:backend": "chmod +x launch-ec2.sh && ./launch-ec2.sh",
+    "start:backend": "cd backend && NODE_ENV=dev npm run dev",
+    "start:frontend": "cd frontend && npm run dev",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anusha-g8/Yoga-Website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/anusha-g8/Yoga-Website/issues"
+  },
+  "homepage": "https://github.com/anusha-g8/Yoga-Website#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
