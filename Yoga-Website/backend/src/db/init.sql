@@ -1,7 +1,7 @@
--- Create Yoga Programs table
+-- 1. Create tables if they don't exist
 CREATE TABLE IF NOT EXISTS programs (
   id SERIAL PRIMARY KEY,
-  title VARCHAR(100) UNIQUE NOT NULL,
+  title VARCHAR(100) NOT NULL,
   description TEXT,
   level VARCHAR(50),
   duration VARCHAR(50),
@@ -10,18 +10,49 @@ CREATE TABLE IF NOT EXISTS programs (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Weekly Schedule table
 CREATE TABLE IF NOT EXISTS schedule (
   id SERIAL PRIMARY KEY,
   day VARCHAR(20) NOT NULL,
   time VARCHAR(50) NOT NULL,
   class_name VARCHAR(100) NOT NULL,
   level VARCHAR(50),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(day, time, class_name)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Bookings table
+CREATE TABLE IF NOT EXISTS videos (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(100) NOT NULL,
+  description TEXT,
+  level VARCHAR(50),
+  duration VARCHAR(50),
+  youtube_id VARCHAR(50) NOT NULL,
+  url VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Ensure unique constraints exist for handling conflicts
+DO $$ 
+BEGIN 
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'programs_title_key') THEN
+        ALTER TABLE programs ADD CONSTRAINT programs_title_key UNIQUE (title);
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN 
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'schedule_unique_class') THEN
+        ALTER TABLE schedule ADD CONSTRAINT schedule_unique_class UNIQUE (day, time, class_name);
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN 
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'videos_youtube_id_key') THEN
+        ALTER TABLE videos ADD CONSTRAINT videos_youtube_id_key UNIQUE (youtube_id);
+    END IF;
+END $$;
+
+-- 3. Remaining tables
 CREATE TABLE IF NOT EXISTS bookings (
   id SERIAL PRIMARY KEY,
   user_name VARCHAR(100) NOT NULL,
@@ -32,7 +63,6 @@ CREATE TABLE IF NOT EXISTS bookings (
   booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Inquiries table
 CREATE TABLE IF NOT EXISTS inquiries (
   id SERIAL PRIMARY KEY,
   user_name VARCHAR(100) NOT NULL,
@@ -41,7 +71,6 @@ CREATE TABLE IF NOT EXISTS inquiries (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Registered Members table
 CREATE TABLE IF NOT EXISTS members (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
@@ -50,19 +79,7 @@ CREATE TABLE IF NOT EXISTS members (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Practice Videos table
-CREATE TABLE IF NOT EXISTS videos (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(100) NOT NULL,
-  description TEXT,
-  level VARCHAR(50),
-  duration VARCHAR(50),
-  youtube_id VARCHAR(50) UNIQUE NOT NULL,
-  url VARCHAR(255),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Seed initial data for programs
+-- 4. Seed initial data
 INSERT INTO programs (title, description, level, duration, price, image_url)
 VALUES 
 ('Foundations of Yoga', 'Perfect for beginners to learn basic poses, alignment, and breathwork.', 'Beginner', '4 weeks', 59.00, '/assets/images/yoga1.jpg'),
@@ -70,7 +87,6 @@ VALUES
 ('Restorative Weekend', 'A gentle series focused on relaxation and stress reduction.', 'All levels', 'Single Workshop', 25.00, '/assets/images/yoga3.jpg')
 ON CONFLICT (title) DO NOTHING;
 
--- Seed initial data for schedule
 INSERT INTO schedule (day, time, class_name, level)
 VALUES 
 ('Monday', '08:00 - 09:00', 'Morning Flow', 'All levels'),
@@ -79,7 +95,6 @@ VALUES
 ('Saturday', '10:00 - 11:30', 'Weekend Workshop', 'Advanced')
 ON CONFLICT (day, time, class_name) DO NOTHING;
 
--- Seed initial data for videos
 INSERT INTO videos (title, description, level, duration, youtube_id, url)
 VALUES 
 ('Easy Morning Yoga For Beginners', 'A gentle and effective morning flow to wake up your body and mind.', 'Beginner', '15:12', 'Y2RcO6TKO4s', 'https://www.youtube.com/watch?v=Y2RcO6TKO4s&vl=en'),

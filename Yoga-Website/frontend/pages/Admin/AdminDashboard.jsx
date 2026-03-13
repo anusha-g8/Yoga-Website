@@ -58,22 +58,27 @@ const AdminDashboard = () => {
   }, [activeTab]);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
-      const [bookingsRes, scheduleRes, programsRes, inquiriesRes, videosRes, membersRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/bookings`),
-        fetch(`${API_BASE_URL}/schedule`),
-        fetch(`${API_BASE_URL}/programs`),
-        fetch(`${API_BASE_URL}/inquiries`),
-        fetch(`${API_BASE_URL}/videos`),
-        fetch(`${API_BASE_URL}/members`)
-      ]);
+      const endpoints = ['bookings', 'schedule', 'programs', 'inquiries', 'videos', 'members'];
       
-      const bookingsData = await bookingsRes.json();
-      const scheduleData = await scheduleRes.json();
-      const programsData = await programsRes.json();
-      const inquiriesData = await inquiriesRes.json();
-      const videosData = await videosRes.json();
-      const membersData = await membersRes.json();
+      const results = await Promise.allSettled(
+        endpoints.map(ep => fetch(`${API_BASE_URL}/${ep}`).then(async res => {
+          if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+          return res.json();
+        }))
+      );
+
+      const data = results.map((result, idx) => {
+        if (result.status === 'fulfilled') {
+          return result.value;
+        } else {
+          console.error(`Failed to fetch ${endpoints[idx]}:`, result.reason);
+          return [];
+        }
+      });
+
+      const [bookingsData, scheduleData, programsData, inquiriesData, videosData, membersData] = data;
       
       setBookings(Array.isArray(bookingsData) ? bookingsData : []);
       setSchedule(Array.isArray(scheduleData) ? scheduleData : []);
@@ -82,15 +87,15 @@ const AdminDashboard = () => {
       setVideos(Array.isArray(videosData) ? videosData : []);
       setMembers(Array.isArray(membersData) ? membersData : []);
       
+    } catch (err) {
+      console.error('Critical error in fetchData:', err);
+    } finally {
       setSelectedBookings([]);
       setSelectedSchedules([]);
       setSelectedPrograms([]);
       setSelectedInquiries([]);
       setSelectedVideos([]);
       setSelectedMembers([]);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching admin data:', err);
       setLoading(false);
     }
   };
