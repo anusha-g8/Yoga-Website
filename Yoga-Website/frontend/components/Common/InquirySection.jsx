@@ -15,6 +15,19 @@ const InquirySection = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { user_name, user_email, message } = formData;
+
+    if (!user_name.trim() || !user_email.trim() || !message.trim()) {
+      setStatus({ type: 'danger', message: 'All fields are required.' });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(user_email)) {
+      setStatus({ type: 'danger', message: 'Please enter a valid email address.' });
+      return;
+    }
+
     try {
       const response = await fetch(`${API_BASE_URL}/inquiries`, {
         method: 'POST',

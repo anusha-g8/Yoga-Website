@@ -16,7 +16,14 @@ describe('Programs API', () => {
   });
 
   it('POST /api/programs should create a program', async () => {
-    const newProgram = { title: 'New Yoga' };
+    const newProgram = { 
+      title: 'New Yoga', 
+      description: 'Test description', 
+      level: 'Beginner', 
+      duration: '60 min', 
+      price: 20, 
+      image_url: '/test.jpg' 
+    };
     vi.mocked(ProgramModel.createProgram).mockResolvedValue({ id: 2, ...newProgram });
 
     const res = await request(app).post('/api/programs').send(newProgram);
@@ -25,7 +32,14 @@ describe('Programs API', () => {
   });
 
   it('PUT /api/programs/:id should update a program', async () => {
-    const updatedProgram = { title: 'Updated Yoga' };
+    const updatedProgram = { 
+      title: 'Updated Yoga',
+      description: 'Updated description',
+      level: 'Intermediate',
+      duration: '75 min',
+      price: 30,
+      image_url: '/updated.jpg'
+    };
     vi.mocked(ProgramModel.updateProgram).mockResolvedValue({ id: 1, ...updatedProgram });
 
     const res = await request(app).put('/api/programs/1').send(updatedProgram);

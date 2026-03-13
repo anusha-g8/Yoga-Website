@@ -16,7 +16,12 @@ describe('Schedule API', () => {
   });
 
   it('POST /api/schedule should create a schedule item', async () => {
-    const newItem = { class_name: 'Evening Flow' };
+    const newItem = { 
+      day: 'Monday', 
+      time: '08:00 - 09:00', 
+      class_name: 'Evening Flow', 
+      level: 'All levels' 
+    };
     vi.mocked(ScheduleModel.createSchedule).mockResolvedValue({ id: 2, ...newItem });
 
     const res = await request(app).post('/api/schedule').send(newItem);

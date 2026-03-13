@@ -56,7 +56,7 @@ describe('Inquiries Integration Tests', () => {
       .send({ user_name: 'No Message', user_email: 'test@test.com' });
 
     expect(res.status).toBe(400);
-    expect(res.body.message).toBe('Missing required inquiry fields');
+    expect(res.body.message).toBe('Validation failed');
   });
 
   it('should delete an inquiry', async () => {

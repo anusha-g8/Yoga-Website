@@ -61,7 +61,14 @@ describe('Programs Integration Tests', () => {
 
     const res = await request(app)
       .put('/api/programs/999')
-      .send({ title: 'Non-existent' });
+      .send({ 
+        title: 'Non-existent',
+        description: 'Desc',
+        level: 'Beginner',
+        duration: '60 min',
+        price: 20,
+        image_url: '/test.jpg'
+      });
 
     expect(res.status).toBe(404);
     expect(res.body.message).toBe('Program not found');

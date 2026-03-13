@@ -131,6 +131,11 @@ const AdminDashboard = () => {
 
   const handleScheduleSubmit = async (e) => {
     e.preventDefault();
+    const { time, class_name, level } = scheduleForm;
+    if (!time.trim() || !class_name.trim() || !level.trim()) {
+      alert('All fields are required');
+      return;
+    }
     try {
       const response = await fetch(`${API_BASE_URL}/schedule`, {
         method: 'POST',
@@ -148,6 +153,15 @@ const AdminDashboard = () => {
 
   const handleProgramSubmit = async (e) => {
     e.preventDefault();
+    const { title, description, duration, price, level, image_url } = programForm;
+    if (!title.trim() || !description.trim() || !duration.trim() || !price || !level.trim() || !image_url.trim()) {
+      alert('All fields are required');
+      return;
+    }
+    if (parseFloat(price) <= 0) {
+      alert('Price must be greater than 0');
+      return;
+    }
     try {
       const response = await fetch(`${API_BASE_URL}/programs`, {
         method: 'POST',

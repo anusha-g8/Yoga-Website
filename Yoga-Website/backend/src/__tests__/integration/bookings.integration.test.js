@@ -66,7 +66,7 @@ describe('Bookings Integration Tests', () => {
       .send(incompleteData);
 
     expect(res.status).toBe(400);
-    expect(res.body.message).toBe('Missing required booking fields');
+    expect(res.body.message).toBe('Validation failed');
     expect(db.query).not.toHaveBeenCalled();
   });
 

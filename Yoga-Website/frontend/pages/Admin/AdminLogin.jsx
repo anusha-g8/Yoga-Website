@@ -13,6 +13,13 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { username, password } = credentials;
+    
+    if (!username.trim() || !password.trim()) {
+      setError('Username and password are required');
+      return;
+    }
+
     try {
       const response = await fetch(`${API_BASE_URL}/admin/login`, {
         method: 'POST',
