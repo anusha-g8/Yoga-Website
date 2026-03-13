@@ -16,5 +16,8 @@ describe('Navbar', () => {
   // main nav links
   expect(screen.getByText(/About/i)).toBeInTheDocument();
   expect(screen.getByText(/Courses/i)).toBeInTheDocument();
+  // social links
+  expect(screen.getByLabelText(/Instagram/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/YouTube/i)).toBeInTheDocument();
   });
 });

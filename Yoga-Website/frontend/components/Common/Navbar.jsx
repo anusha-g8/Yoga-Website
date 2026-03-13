@@ -43,6 +43,11 @@ const Navbar = () => {
             </li>
           </ul>
           <ul className="navbar-nav ms-auto align-items-center">
+            <li className="nav-item me-3">
+              <a className="nav-link p-0" href="https://www.youtube.com/@AnushaGhaliYogaStudio" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                <img src="/assets/images/youtube.svg" alt="YouTube" className="youtube-icon" />
+              </a>
+            </li>
             <li className="nav-item">
               <a className="nav-link p-0" href="https://instagram.com/anushayogastudio" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <img src="/assets/images/instagram.svg" alt="Instagram" className="instagram-icon" />

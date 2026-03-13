@@ -10,8 +10,11 @@ describe('About Page', () => {
         <About />
       </MemoryRouter>
     );
-    expect(screen.getByText(/Learn more about Anusha/i)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /About Anusha/i })).toBeInTheDocument();
-    expect(screen.getByText(/Certifications/i)).toBeInTheDocument();
+    expect(screen.getByText(/About Anusha's Yoga/i)).toBeInTheDocument();
+    expect(screen.getByText(/Class Philosophy/i)).toBeInTheDocument();
+    expect(screen.getByText(/balanced blend of Ashtanga discipline/i)).toBeInTheDocument();
+    // Use getAllByText for multiple occurrences or getByRole for heading
+    expect(screen.getByRole('heading', { name: /Anusha Ghali/i })).toBeInTheDocument();
+    expect(screen.getByText(/Certifications & Expertise/i)).toBeInTheDocument();
   });
 });
