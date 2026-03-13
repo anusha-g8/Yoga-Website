@@ -23,25 +23,36 @@ const MemberPortal = () => {
     setLoading(true);
 
     const endpoint = isLogin ? '/members/login' : '/members/register';
+    const apiUrl = API_BASE_URL || '/api';
     
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      const response = await fetch(`${apiUrl}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        // Handle non-JSON response (e.g. 404 or 500 HTML page)
+        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+      }
 
       if (response.ok) {
         localStorage.setItem('memberToken', data.token);
-        localStorage.setItem('memberName', data.member.name);
+        localStorage.setItem('memberName', data.member?.name || 'Member');
         navigate('/member/dashboard');
       } else {
         setError(data.message || 'Authentication failed');
       }
     } catch (err) {
-      setError('Connection error. Please try again.');
+      console.error('Portal error:', err);
+      setError(err.message === 'Failed to fetch' 
+        ? 'Cannot connect to server. Please ensure the backend is running.' 
+        : `Error: ${err.message}`);
     } finally {
       setLoading(false);
     }

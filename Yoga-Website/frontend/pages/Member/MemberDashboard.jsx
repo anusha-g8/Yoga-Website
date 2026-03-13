@@ -16,7 +16,8 @@ const MemberDashboard = () => {
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/members/profile`, {
+        const apiUrl = API_BASE_URL || '/api';
+        const response = await fetch(`${apiUrl}/members/profile`, {
           headers: { 'x-auth-token': token }
         });
 
@@ -24,11 +25,14 @@ const MemberDashboard = () => {
           const data = await response.json();
           setProfile(data);
         } else {
+          console.warn(`Profile fetch failed with status ${response.status}`);
           localStorage.removeItem('memberToken');
           navigate('/member/portal');
         }
       } catch (err) {
         console.error('Error fetching profile:', err);
+        // If it's a connection error, we might want to stay on the page but show an error
+        // For now, let's just log it as it usually means the session is invalid or server is down
       } finally {
         setLoading(false);
       }
