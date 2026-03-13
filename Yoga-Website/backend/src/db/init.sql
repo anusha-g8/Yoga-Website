@@ -1,7 +1,7 @@
 -- Create Yoga Programs table
 CREATE TABLE IF NOT EXISTS programs (
   id SERIAL PRIMARY KEY,
-  title VARCHAR(100) NOT NULL,
+  title VARCHAR(100) UNIQUE NOT NULL,
   description TEXT,
   level VARCHAR(50),
   duration VARCHAR(50),
@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS schedule (
   time VARCHAR(50) NOT NULL,
   class_name VARCHAR(100) NOT NULL,
   level VARCHAR(50),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(day, time, class_name)
 );
 
 -- Create Bookings table
@@ -40,12 +41,34 @@ CREATE TABLE IF NOT EXISTS inquiries (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create Registered Members table
+CREATE TABLE IF NOT EXISTS members (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create Practice Videos table
+CREATE TABLE IF NOT EXISTS videos (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(100) NOT NULL,
+  description TEXT,
+  level VARCHAR(50),
+  duration VARCHAR(50),
+  youtube_id VARCHAR(50) UNIQUE NOT NULL,
+  url VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Seed initial data for programs
 INSERT INTO programs (title, description, level, duration, price, image_url)
 VALUES 
 ('Foundations of Yoga', 'Perfect for beginners to learn basic poses, alignment, and breathwork.', 'Beginner', '4 weeks', 59.00, '/assets/images/yoga1.jpg'),
 ('Vinyasa Mastery', 'Build strength and mobility with this intermediate flow sequence.', 'Intermediate', '6 weeks', 89.00, '/assets/images/yoga2.jpg'),
-('Restorative Weekend', 'A gentle series focused on relaxation and stress reduction.', 'All levels', 'Single Workshop', 25.00, '/assets/images/yoga3.jpg');
+('Restorative Weekend', 'A gentle series focused on relaxation and stress reduction.', 'All levels', 'Single Workshop', 25.00, '/assets/images/yoga3.jpg')
+ON CONFLICT (title) DO NOTHING;
 
 -- Seed initial data for schedule
 INSERT INTO schedule (day, time, class_name, level)
@@ -53,4 +76,12 @@ VALUES
 ('Monday', '08:00 - 09:00', 'Morning Flow', 'All levels'),
 ('Wednesday', '18:00 - 19:15', 'Hatha Yoga', 'Beginner'),
 ('Friday', '07:30 - 08:30', 'Vinyasa Flow', 'Intermediate'),
-('Saturday', '10:00 - 11:30', 'Weekend Workshop', 'Advanced');
+('Saturday', '10:00 - 11:30', 'Weekend Workshop', 'Advanced')
+ON CONFLICT (day, time, class_name) DO NOTHING;
+
+-- Seed initial data for videos
+INSERT INTO videos (title, description, level, duration, youtube_id, url)
+VALUES 
+('Easy Morning Yoga For Beginners', 'A gentle and effective morning flow to wake up your body and mind.', 'Beginner', '15:12', 'Y2RcO6TKO4s', 'https://www.youtube.com/watch?v=Y2RcO6TKO4s&vl=en'),
+('Full Body Flow - Breathe & Release', 'A powerful full body flow to release tension and build strength.', 'All levels', '20:15', 'ZAlpjTIe0DA', 'https://www.youtube.com/watch?v=ZAlpjTIe0DA&t=913s')
+ON CONFLICT (youtube_id) DO NOTHING;

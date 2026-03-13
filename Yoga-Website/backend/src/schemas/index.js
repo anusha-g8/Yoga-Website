@@ -36,9 +36,31 @@ export const inquirySchema = z.object({
   message: z.string().min(1, 'Message is required')
 });
 
+// Video Schema
+export const videoSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(100),
+  description: z.string().optional().nullable(),
+  level: z.string().min(1, 'Level is required'),
+  duration: z.string().min(1, 'Duration is required'),
+  youtube_id: z.string().min(1, 'YouTube ID is required'),
+  url: z.string().url('Invalid URL format').optional().nullable()
+});
+
 // Admin Login Schema
 export const adminLoginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
+  password: z.string().min(1, 'Password is required')
+});
+
+// Member Schemas
+export const memberRegisterSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100),
+  email: z.string().email('Invalid email format'),
+  password: z.string().min(6, 'Password must be at least 6 characters')
+});
+
+export const memberLoginSchema = z.object({
+  email: z.string().email('Invalid email format'),
   password: z.string().min(1, 'Password is required')
 });
 

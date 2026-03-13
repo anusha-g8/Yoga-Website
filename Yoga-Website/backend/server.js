@@ -11,6 +11,8 @@ import scheduleRoutes from './src/routes/scheduleRoutes.js';
 import bookingRoutes from './src/routes/bookingRoutes.js';
 import inquiryRoutes from './src/routes/inquiryRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
+import videoRoutes from './src/routes/videoRoutes.js';
+import memberRoutes from './src/routes/memberRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -18,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
 
 // Trust CloudFront proxy for HTTPS headers
 app.set('trust proxy', 1);
@@ -56,6 +58,8 @@ app.use('/api/schedule', scheduleRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/videos', videoRoutes);
+app.use('/api/members', memberRoutes);
 
 // Health check route
 app.get('/api/health', async (req, res) => {

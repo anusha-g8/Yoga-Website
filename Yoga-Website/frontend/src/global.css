@@ -245,6 +245,10 @@ header {
   .instagram-icon, .youtube-icon { height: 28px; }
 }
 
+.table-danger-light {
+  background-color: rgba(220, 53, 69, 0.05);
+}
+
 /* Footer */
 footer.site-footer {
   margin-top: 36px;

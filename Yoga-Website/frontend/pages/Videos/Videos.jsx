@@ -1,24 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../src/config';
 
 const Videos = () => {
-  const videos = [
-    {
-      title: 'Easy Morning Yoga For Beginners',
-      duration: '15:12',
-      level: 'Beginner',
-      desc: 'A gentle and effective morning flow to wake up your body and mind.',
-      youtubeId: 'Y2RcO6TKO4s',
-      url: 'https://www.youtube.com/watch?v=Y2RcO6TKO4s&vl=en'
-    },
-    {
-      title: 'Full Body Flow - Breathe & Release',
-      duration: '20:15',
-      level: 'All levels',
-      desc: 'A powerful full body flow to release tension and build strength.',
-      youtubeId: 'ZAlpjTIe0DA',
-      url: 'https://www.youtube.com/watch?v=ZAlpjTIe0DA&t=913s'
-    }
-  ];
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/videos`);
+        const data = await response.json();
+        setVideos(Array.isArray(data) ? data : []);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+        setLoading(false);
+      }
+    };
+    fetchVideos();
+  }, []);
+
+  if (loading) return <div className="container my-5 text-center">Loading videos...</div>;
 
   return (
     <div className="container my-5">
@@ -29,7 +33,7 @@ const Videos = () => {
             <div className="card h-100 shadow-sm overflow-hidden border-0">
               <div className="ratio ratio-16x9">
                 <iframe
-                  src={`https://www.youtube.com/embed/${video.youtubeId}${video.youtubeId === 'Y2RcO6TKO4s' ? '?hl=en' : video.youtubeId === 'ZAlpjTIe0DA' ? '?start=913' : ''}`}
+                  src={`https://www.youtube.com/embed/${video.youtube_id}`}
                   title={video.title}
                   allowFullScreen
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -41,11 +45,11 @@ const Videos = () => {
                   <h5 className="card-title fw-bold mb-0">{video.title}</h5>
                   <span className="badge bg-light text-primary border border-primary-subtle">{video.level}</span>
                 </div>
-                <p className="card-text text-muted small mb-0">{video.desc}</p>
+                <p className="card-text text-muted small mb-0">{video.description}</p>
                 <div className="mt-3 d-flex justify-content-between align-items-center">
                   <span className="text-muted small"><i className="bi bi-clock me-1"></i>{video.duration}</span>
                   <a 
-                    href={video.url} 
+                    href={video.url || `https://www.youtube.com/watch?v=${video.youtube_id}`} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="btn btn-link btn-sm p-0 text-decoration-none"
@@ -57,11 +61,17 @@ const Videos = () => {
             </div>
           </div>
         ))}
+        {videos.length === 0 && (
+          <div className="col-12 text-center text-muted py-5">
+            No sample videos available at the moment.
+          </div>
+        )}
       </div>
+
       <div className="mt-5 p-4 bg-light rounded text-center shadow-sm">
         <h4>Want more?</h4>
         <p className="mb-0">Full-length class recordings are available for enrolled students in our member portal.</p>
-        <button className="btn btn-primary mt-3">Access Member Portal</button>
+        <button className="btn btn-primary mt-3" onClick={() => navigate('/member/portal')}>Access Member Portal</button>
       </div>
     </div>
   );

@@ -52,7 +52,7 @@ const InquirySection = () => {
         <div className="row justify-content-center text-center mb-4">
           <div className="col-md-8">
             <h2 className="fw-bold" style={{ color: 'var(--lav-600)' }}>Have Questions?</h2>
-            <p className="text-muted">Send us an inquiry and we'll get back to you as soon as possible.</p>
+            <p className="text-muted">Send us an inquiry and we&apos;ll get back to you as soon as possible.</p>
           </div>
         </div>
         <div className="row justify-content-center">
