@@ -139,6 +139,41 @@ The backend integrates `helmet` middleware to set various HTTP headers for prote
 
 ---
 
+## 📈 Monitoring
+
+The application uses **AWS CloudWatch** to monitor infrastructure health, traffic, and API performance.
+
+### **1. Infrastructure Monitoring**
+EC2 instances are configured with the **CloudWatch Agent** to collect:
+- **CPU Utilization:** Detailed usage (user, system, idle).
+- **Memory Usage:** Percentage of memory consumed.
+- **Network Traffic:** Inbound and outbound bytes.
+
+### **2. API Performance Monitoring**
+The backend uses a custom **Morgan** logging format that includes response times. The CloudWatch Agent streams these logs to CloudWatch Logs, where **Metric Filters** extract:
+- **ResponseTime:** Average API latency in milliseconds.
+- **RequestCount:** Total volume of incoming API requests.
+- **5xxErrorCount:** Count of server-side errors.
+
+### **3. Setup Instructions**
+If launching new instances, ensure you run the setup script once from your local machine to prepare IAM roles:
+```bash
+# 1. Prepare IAM Roles (Run once)
+bash setup-cloudwatch-iam.sh
+
+# 2. Prepare CloudWatch Log Groups & Filters (Run once)
+bash create-cloudwatch-monitoring.sh
+
+# 3. Generate Performance Report (Anytime)
+bash generate-monitoring-report.sh
+
+# 4. Generate Visual Traffic Chart (Pie Chart)
+bash generate-visual-report.sh
+```
+*Note: Generating charts requires `pip install matplotlib` on your local machine.*
+
+---
+
 ## 📂 Project Structure
 - `frontend/`: React + Vite application.
 - `backend/`: Node.js Express API.

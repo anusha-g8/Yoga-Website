@@ -35,12 +35,47 @@ INSTANCE_ID=$(aws ec2 run-instances \
     --instance-type $INSTANCE_TYPE \
     --key-name $KEY_NAME \
     --security-group-ids $SG_ID \
+    --iam-instance-profile Name=CloudWatchAgentInstanceProfile \
     --user-data "#!/bin/bash
                  dnf update -y
-                 dnf install -y docker docker-compose-plugin
+                 dnf install -y docker amazon-cloudwatch-agent docker-compose-plugin
                  systemctl start docker
                  systemctl enable docker
-                 usermod -aG docker ec2-user" \
+                 usermod -aG docker ec2-user
+                 
+                 # Configure CloudWatch Agent
+                 cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+                 {
+                   \"metrics\": {
+                     \"metrics_collected\": {
+                       \"cpu\": {
+                         \"measurement\": [\"cpu_usage_idle\", \"cpu_usage_iowait\", \"cpu_usage_user\", \"cpu_usage_system\"],
+                         \"metrics_collection_interval\": 60,
+                         \"totalcpu\": true
+                       },
+                       \"mem\": {
+                         \"measurement\": [\"mem_used_percent\"],
+                         \"metrics_collection_interval\": 60
+                       }
+                     }
+                   },
+                   \"logs\": {
+                     \"logs_collected\": {
+                       \"files\": {
+                         \"collect_list\": [
+                           {
+                             \"file_path\": \"/home/ec2-user/app/Yoga-Website/backend/server.log\",
+                             \"log_group_name\": \"yoga-backend-logs-prod\",
+                             \"log_stream_name\": \"{instance_id}\"
+                           }
+                         ]
+                       }
+                     }
+                   }
+                 }
+EOF
+                 systemctl start amazon-cloudwatch-agent
+                 systemctl enable amazon-cloudwatch-agent" \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$INSTANCE_NAME}]" \
     --query 'Instances[0].InstanceId' --output text \
     --region $REGION)

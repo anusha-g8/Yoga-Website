@@ -40,7 +40,11 @@ app.use((req, res, next) => {
 
 app.use(cors());
 app.use(express.json());
-app.use(morgan('dev'));
+
+// Custom morgan format for CloudWatch
+const morganFormat = '[:date[iso]] :method :url :status :res[content-length] - :response-time ms';
+app.use(morgan(morganFormat));
+
 app.use((req, res, next) => {
   console.log(`URL: ${req.url}, NODE_ENV: ${process.env.NODE_ENV}`);
   next();
