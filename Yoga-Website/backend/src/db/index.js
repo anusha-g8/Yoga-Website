@@ -68,6 +68,20 @@ export const query = async (text, params) => {
   }
 };
 
+export const listTables = async () => {
+  try {
+    const result = await pool.query(`
+      SELECT table_name
+      FROM information_schema.tables
+      WHERE table_schema = 'public'
+      AND table_type = 'BASE TABLE';
+    `);
+    return result.rows.map(row => row.table_name);
+  } catch (err) {
+    console.error('Error listing tables:', err);
+    throw err;
+  }
+};
 export const initDb = async () => {
   let client;
   try {
