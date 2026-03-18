@@ -63,7 +63,9 @@ const AdminDashboard = () => {
       const endpoints = ['bookings', 'schedule', 'programs', 'inquiries', 'videos', 'members'];
       
       const results = await Promise.allSettled(
-        endpoints.map(ep => fetch(`${API_BASE_URL}/${ep}`).then(async res => {
+        endpoints.map(ep => fetch(`${API_BASE_URL}/${ep}`, {
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        }).then(async res => {
           if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
           return res.json();
         }))
@@ -104,7 +106,10 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/bookings/${id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('adminToken')
+        },
         body: JSON.stringify({ status })
       });
       if (response.ok) {
@@ -130,7 +135,10 @@ const AdminDashboard = () => {
       const updatePromises = ids.map(id => 
         fetch(`${API_BASE_URL}/bookings/${id}/status`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('adminToken')
+        },
           body: JSON.stringify({ status })
         })
       );
@@ -231,7 +239,10 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/schedule/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('adminToken')
+        },
         body: JSON.stringify(editScheduleForm)
       });
       if (response.ok) {
@@ -272,7 +283,10 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/programs/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('adminToken')
+        },
         body: JSON.stringify(editProgramForm)
       });
       if (response.ok) {
@@ -313,7 +327,10 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/videos/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('adminToken')
+        },
         body: JSON.stringify(editVideoForm)
       });
       if (response.ok) {
@@ -338,7 +355,10 @@ const AdminDashboard = () => {
 
     try {
       const deletePromises = ids.map(id => 
-        fetch(`${API_BASE_URL}/schedule/${id}`, { method: 'DELETE' })
+        fetch(`${API_BASE_URL}/schedule/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        })
       );
       await Promise.all(deletePromises);
       alert('Classes deleted successfully');
@@ -359,7 +379,10 @@ const AdminDashboard = () => {
 
     try {
       const deletePromises = ids.map(id => 
-        fetch(`${API_BASE_URL}/programs/${id}`, { method: 'DELETE' })
+        fetch(`${API_BASE_URL}/programs/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        })
       );
       await Promise.all(deletePromises);
       alert('Programs deleted successfully');
@@ -380,7 +403,10 @@ const AdminDashboard = () => {
 
     try {
       const deletePromises = ids.map(id => 
-        fetch(`${API_BASE_URL}/inquiries/${id}`, { method: 'DELETE' })
+        fetch(`${API_BASE_URL}/inquiries/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        })
       );
       await Promise.all(deletePromises);
       alert('Inquiries deleted successfully');
@@ -401,7 +427,10 @@ const AdminDashboard = () => {
 
     try {
       const deletePromises = ids.map(id => 
-        fetch(`${API_BASE_URL}/videos/${id}`, { method: 'DELETE' })
+        fetch(`${API_BASE_URL}/videos/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        })
       );
       await Promise.all(deletePromises);
       alert('Videos deleted successfully');
@@ -415,7 +444,10 @@ const AdminDashboard = () => {
   const handleDeleteBooking = async (id) => {
     if (!window.confirm('Delete this booking record?')) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/bookings/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/bookings/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        });
       if (response.ok) {
         alert('Booking deleted successfully');
         fetchData();
@@ -430,7 +462,10 @@ const AdminDashboard = () => {
   const handleDeleteSchedule = async (id) => {
     if (!window.confirm('Delete this class? This will also delete associated bookings.')) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/schedule/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/schedule/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        });
       if (response.ok) {
         alert('Schedule item deleted successfully');
         fetchData();
@@ -447,7 +482,10 @@ const AdminDashboard = () => {
   const handleDeleteProgram = async (id) => {
     if (!window.confirm('Delete this program? This will also delete associated bookings.')) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/programs/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/programs/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        });
       if (response.ok) {
         alert('Program deleted successfully');
         fetchData();
@@ -462,7 +500,10 @@ const AdminDashboard = () => {
   const handleDeleteInquiry = async (id) => {
     if (!window.confirm('Delete this inquiry?')) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/inquiries/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/inquiries/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        });
       if (response.ok) {
         alert('Inquiry deleted successfully');
         fetchData();
@@ -477,7 +518,10 @@ const AdminDashboard = () => {
   const handleDeleteVideo = async (id) => {
     if (!window.confirm('Delete this video?')) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/videos/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/videos/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        });
       if (response.ok) {
         alert('Video deleted successfully');
         fetchData();
@@ -492,7 +536,10 @@ const AdminDashboard = () => {
   const handleDeleteMember = async (id) => {
     if (!window.confirm('Delete this member?')) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/members/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/members/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        });
       if (response.ok) {
         alert('Member deleted successfully');
         fetchData();
@@ -528,7 +575,10 @@ const AdminDashboard = () => {
 
     try {
       const deletePromises = ids.map(id => 
-        fetch(`${API_BASE_URL}/members/${id}`, { method: 'DELETE' })
+        fetch(`${API_BASE_URL}/members/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        })
       );
       await Promise.all(deletePromises);
       alert('Members deleted successfully');
@@ -549,7 +599,10 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/schedule`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('adminToken')
+        },
         body: JSON.stringify(scheduleForm)
       });
       if (response.ok) {
@@ -575,7 +628,10 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/programs`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('adminToken')
+        },
         body: JSON.stringify(programForm)
       });
       if (response.ok) {
@@ -597,7 +653,10 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/videos`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('adminToken')
+        },
         body: JSON.stringify({ title, description, level, duration, youtube_id, url })
       });
       if (response.ok) {

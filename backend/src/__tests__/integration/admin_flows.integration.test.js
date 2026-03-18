@@ -35,6 +35,7 @@ describe('Admin Integrated Flows', () => {
 
     const postRes = await request(app)
       .post('/api/programs')
+      .set('x-auth-token', 'admin-token-123')
       .send(adminProgram);
 
     expect(postRes.status).toBe(201);
@@ -63,6 +64,7 @@ describe('Admin Integrated Flows', () => {
 
     const postRes = await request(app)
       .post('/api/schedule')
+      .set('x-auth-token', 'admin-token-123')
       .send(newClass);
 
     expect(postRes.status).toBe(201);
@@ -70,7 +72,9 @@ describe('Admin Integrated Flows', () => {
 
     // 2. Verify deletion of that class
     db.query.mockResolvedValueOnce({ rows: [mockSavedClass] });
-    const deleteRes = await request(app).delete('/api/schedule/300');
+    const deleteRes = await request(app)
+      .delete('/api/schedule/300')
+      .set('x-auth-token', 'admin-token-123');
     
     expect(deleteRes.status).toBe(200);
     expect(deleteRes.body.message).toBe('Schedule item deleted');

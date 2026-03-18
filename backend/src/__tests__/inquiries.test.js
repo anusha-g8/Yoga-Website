@@ -10,7 +10,9 @@ describe('Inquiries API', () => {
     const mockInquiries = [{ id: 1, message: 'Hello' }];
     vi.mocked(InquiryModel.getAllInquiries).mockResolvedValue(mockInquiries);
 
-    const res = await request(app).get('/api/inquiries');
+    const res = await request(app)
+      .get('/api/inquiries')
+      .set('x-auth-token', 'admin-token-123');
     expect(res.status).toBe(200);
     expect(res.body).toEqual(mockInquiries);
   });
@@ -27,7 +29,9 @@ describe('Inquiries API', () => {
   it('DELETE /api/inquiries/:id should delete an inquiry', async () => {
     vi.mocked(InquiryModel.deleteInquiry).mockResolvedValue({ id: 1 });
 
-    const res = await request(app).delete('/api/inquiries/1');
+    const res = await request(app)
+      .delete('/api/inquiries/1')
+      .set('x-auth-token', 'admin-token-123');
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('Inquiry deleted');
   });

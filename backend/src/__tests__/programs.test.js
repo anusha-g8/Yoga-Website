@@ -24,9 +24,13 @@ describe('Programs API', () => {
       price: 20, 
       image_url: '/test.jpg' 
     };
-    vi.mocked(ProgramModel.createProgram).mockResolvedValue({ id: 2, ...newProgram });
+    const mockCreatedProgram = { id: 2, ...newProgram };
+    vi.mocked(ProgramModel.createProgram).mockResolvedValue(mockCreatedProgram);
 
-    const res = await request(app).post('/api/programs').send(newProgram);
+    const res = await request(app)
+      .post('/api/programs')
+      .set('x-auth-token', 'admin-token-123')
+      .send(newProgram);
     expect(res.status).toBe(201);
     expect(res.body.title).toBe('New Yoga');
   });
@@ -42,7 +46,10 @@ describe('Programs API', () => {
     };
     vi.mocked(ProgramModel.updateProgram).mockResolvedValue({ id: 1, ...updatedProgram });
 
-    const res = await request(app).put('/api/programs/1').send(updatedProgram);
+    const res = await request(app)
+      .put('/api/programs/1')
+      .set('x-auth-token', 'admin-token-123')
+      .send(updatedProgram);
     expect(res.status).toBe(200);
     expect(res.body.title).toBe('Updated Yoga');
   });
@@ -50,7 +57,9 @@ describe('Programs API', () => {
   it('DELETE /api/programs/:id should delete a program', async () => {
     vi.mocked(ProgramModel.deleteProgram).mockResolvedValue({ id: 1 });
 
-    const res = await request(app).delete('/api/programs/1');
+    const res = await request(app)
+      .delete('/api/programs/1')
+      .set('x-auth-token', 'admin-token-123');
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('Program deleted');
   });

@@ -24,7 +24,10 @@ describe('Schedule API', () => {
     };
     vi.mocked(ScheduleModel.createSchedule).mockResolvedValue({ id: 2, ...newItem });
 
-    const res = await request(app).post('/api/schedule').send(newItem);
+    const res = await request(app)
+      .post('/api/schedule')
+      .set('x-auth-token', 'admin-token-123')
+      .send(newItem);
     expect(res.status).toBe(201);
     expect(res.body.class_name).toBe('Evening Flow');
   });
@@ -32,7 +35,9 @@ describe('Schedule API', () => {
   it('DELETE /api/schedule/:id should delete a schedule item', async () => {
     vi.mocked(ScheduleModel.deleteSchedule).mockResolvedValue({ id: 1 });
 
-    const res = await request(app).delete('/api/schedule/1');
+    const res = await request(app)
+      .delete('/api/schedule/1')
+      .set('x-auth-token', 'admin-token-123');
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('Schedule item deleted');
   });

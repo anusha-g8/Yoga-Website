@@ -10,7 +10,9 @@ describe('Bookings API', () => {
     const mockBookings = [{ id: 1, user_name: 'John Doe' }];
     vi.mocked(BookingModel.getAllBookings).mockResolvedValue(mockBookings);
 
-    const res = await request(app).get('/api/bookings');
+    const res = await request(app)
+      .get('/api/bookings')
+      .set('x-auth-token', 'admin-token-123');
     expect(res.status).toBe(200);
     expect(res.body).toEqual(mockBookings);
   });
@@ -32,7 +34,10 @@ describe('Bookings API', () => {
   it('PATCH /api/bookings/:id/status should update status', async () => {
     vi.mocked(BookingModel.updateBookingStatus).mockResolvedValue({ id: 1, status: 'confirmed' });
 
-    const res = await request(app).patch('/api/bookings/1/status').send({ status: 'confirmed' });
+    const res = await request(app)
+      .patch('/api/bookings/1/status')
+      .set('x-auth-token', 'admin-token-123')
+      .send({ status: 'confirmed' });
     expect(res.status).toBe(200);
     expect(res.body.status).toBe('confirmed');
   });

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'member-secret-key-123';
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'admin-token-123';
 
 export const auth = (req, res, next) => {
   const token = req.header('x-auth-token');
@@ -15,5 +16,19 @@ export const auth = (req, res, next) => {
     next();
   } catch (err) {
     res.status(401).json({ message: 'Token is not valid' });
+  }
+};
+
+export const adminAuth = (req, res, next) => {
+  const token = req.header('x-auth-token');
+
+  if (!token) {
+    return res.status(401).json({ message: 'No admin token, authorization denied' });
+  }
+
+  if (token === ADMIN_TOKEN) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Admin token is not valid' });
   }
 };

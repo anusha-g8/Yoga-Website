@@ -32,9 +32,15 @@ const Courses = () => {
 
     const handleEnroll = async (programId) => {
     const userName = prompt('Enter your name:');
+    if (!userName) {
+      alert('Name is required for enrollment');
+      return;
+    }
     const userEmail = prompt('Enter your email:');
-
-    if (!userName || !userEmail) return;
+    if (!userEmail) {
+      alert('Email is required for enrollment');
+      return;
+    }
 
     try {
       const response = await fetch(`${API_BASE_URL}/bookings`, {

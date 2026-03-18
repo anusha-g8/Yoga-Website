@@ -44,7 +44,9 @@ describe('Inquiries Integration Tests', () => {
     // 2. Mock the SELECT ALL
     db.query.mockResolvedValueOnce({ rows: [mockInquiry] });
 
-    const getRes = await request(app).get('/api/inquiries');
+    const getRes = await request(app)
+      .get('/api/inquiries')
+      .set('x-auth-token', 'admin-token-123');
 
     expect(getRes.status).toBe(200);
     expect(getRes.body[0].message).toContain('morning flow');
@@ -62,7 +64,9 @@ describe('Inquiries Integration Tests', () => {
   it('should delete an inquiry', async () => {
     db.query.mockResolvedValueOnce({ rows: [{ id: 100 }] });
 
-    const res = await request(app).delete('/api/inquiries/100');
+    const res = await request(app)
+      .delete('/api/inquiries/100')
+      .set('x-auth-token', 'admin-token-123');
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('Inquiry deleted');

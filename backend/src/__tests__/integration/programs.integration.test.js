@@ -36,6 +36,7 @@ describe('Programs Integration Tests', () => {
     // 2. Perform POST request
     const postRes = await request(app)
       .post('/api/programs')
+      .set('x-auth-token', 'admin-token-123')
       .send(newProgramData);
 
     expect(postRes.status).toBe(201);
@@ -61,6 +62,7 @@ describe('Programs Integration Tests', () => {
 
     const res = await request(app)
       .put('/api/programs/999')
+      .set('x-auth-token', 'admin-token-123')
       .send({ 
         title: 'Non-existent',
         description: 'Desc',

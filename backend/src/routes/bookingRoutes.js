@@ -1,13 +1,14 @@
 import express from 'express';
 import { postBooking, updateStatus, getBookings, deleteBooking } from '../controllers/bookingController.js';
 import { validate } from '../middleware/validate.js';
+import { adminAuth } from '../middleware/auth.js';
 import { bookingSchema, idParamSchema } from '../schemas/index.js';
 
 const router = express.Router();
 
-router.get('/', getBookings);
+router.get('/', adminAuth, getBookings);
 router.post('/', validate(bookingSchema), postBooking);
-router.patch('/:id/status', validate(idParamSchema, 'params'), updateStatus);
-router.delete('/:id', validate(idParamSchema, 'params'), deleteBooking);
+router.patch('/:id/status', adminAuth, validate(idParamSchema, 'params'), updateStatus);
+router.delete('/:id', adminAuth, validate(idParamSchema, 'params'), deleteBooking);
 
 export default router;

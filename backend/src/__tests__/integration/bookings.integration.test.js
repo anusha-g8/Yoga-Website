@@ -48,6 +48,7 @@ describe('Bookings Integration Tests', () => {
 
     const patchRes = await request(app)
       .patch('/api/bookings/50/status')
+      .set('x-auth-token', 'admin-token-123')
       .send({ status: 'confirmed' });
 
     expect(patchRes.status).toBe(200);
@@ -75,6 +76,7 @@ describe('Bookings Integration Tests', () => {
 
     const res = await request(app)
       .patch('/api/bookings/999/status')
+      .set('x-auth-token', 'admin-token-123')
       .send({ status: 'confirmed' });
 
     expect(res.status).toBe(404);
@@ -84,7 +86,9 @@ describe('Bookings Integration Tests', () => {
   it('should delete a booking record', async () => {
     db.query.mockResolvedValueOnce({ rows: [{ id: 50 }] });
 
-    const res = await request(app).delete('/api/bookings/50');
+    const res = await request(app)
+      .delete('/api/bookings/50')
+      .set('x-auth-token', 'admin-token-123');
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('Booking deleted');

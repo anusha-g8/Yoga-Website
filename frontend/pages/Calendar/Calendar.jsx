@@ -44,9 +44,15 @@ const Calendar = () => {
   const handleBook = async (classId) => {
     // Simple mock booking for now - would ideally open a modal
     const userName = prompt('Enter your name:');
+    if (!userName) {
+      alert('Name is required for booking');
+      return;
+    }
     const userEmail = prompt('Enter your email:');
-    
-    if (!userName || !userEmail) return;
+    if (!userEmail) {
+      alert('Email is required for booking');
+      return;
+    }
 
     try {
       const response = await fetch(`${API_BASE_URL}/bookings`, {
