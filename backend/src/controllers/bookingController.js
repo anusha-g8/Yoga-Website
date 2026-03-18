@@ -3,9 +3,6 @@ import * as BookingModel from '../models/bookingModel.js';
 export const postBooking = async (req, res) => {
   try {
     const { user_name, user_email, class_id, program_id } = req.body;
-    if (!user_name || !user_email || (!class_id && !program_id)) {
-      return res.status(400).json({ message: 'Missing required booking fields' });
-    }
     const newBooking = await BookingModel.createBooking({ user_name, user_email, class_id, program_id });
     res.status(201).json(newBooking);
   } catch (error) {

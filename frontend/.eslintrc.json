@@ -4,6 +4,11 @@
     "es2021": true,
     "jest": true
   },
+  "globals": {
+    "cy": "readonly",
+    "vi": "readonly",
+    "global": "readonly"
+  },
   "extends": ["eslint:recommended", "plugin:react/recommended", "prettier"],
   "parserOptions": {
     "ecmaVersion": 12,

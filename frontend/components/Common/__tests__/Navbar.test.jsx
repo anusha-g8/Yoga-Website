@@ -11,10 +11,13 @@ describe('Navbar', () => {
       </MemoryRouter>
     );
 
-  // brand is image with alt text
-  expect(screen.getByAltText(/Yoga with Anusha/i)).toBeInTheDocument();
+  // brand is accessible by label
+  expect(screen.getByLabelText(/Yoga with Anusha/i)).toBeInTheDocument();
   // main nav links
   expect(screen.getByText(/About/i)).toBeInTheDocument();
   expect(screen.getByText(/Courses/i)).toBeInTheDocument();
+  // social links
+  expect(screen.getByLabelText(/Instagram/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/YouTube/i)).toBeInTheDocument();
   });
 });

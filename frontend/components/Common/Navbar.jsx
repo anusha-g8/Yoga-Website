@@ -5,8 +5,8 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white shadow-sm">
       <div className="container">
-        <Link className="navbar-brand d-flex align-items-center" to="/">
-          <img src="/assets/images/Trishual.png" alt="Yoga with Anusha" className="navbar-logo" style={{ objectFit: 'contain' }} />
+        <Link className="navbar-brand d-flex align-items-center" to="/" aria-label="Yoga with Anusha">
+          <img src="/assets/images/Trishual.png" alt="" className="navbar-logo" style={{ objectFit: 'contain' }} />
           <div className="brand-text-container d-flex flex-column lh-1">
             <span className="brand-yoga">Yoga</span>
             <span className="brand-with-anusha">
@@ -43,6 +43,11 @@ const Navbar = () => {
             </li>
           </ul>
           <ul className="navbar-nav ms-auto align-items-center">
+            <li className="nav-item me-3">
+              <a className="nav-link p-0" href="https://www.youtube.com/@AnushaGhaliYogaStudio" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                <img src="/assets/images/youtube.svg" alt="YouTube" className="youtube-icon" />
+              </a>
+            </li>
             <li className="nav-item">
               <a className="nav-link p-0" href="https://instagram.com/anushayogastudio" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <img src="/assets/images/instagram.svg" alt="Instagram" className="instagram-icon" />

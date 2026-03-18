@@ -15,6 +15,19 @@ const InquirySection = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { user_name, user_email, message } = formData;
+
+    if (!user_name.trim() || !user_email.trim() || !message.trim()) {
+      setStatus({ type: 'danger', message: 'All fields are required.' });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(user_email)) {
+      setStatus({ type: 'danger', message: 'Please enter a valid email address.' });
+      return;
+    }
+
     try {
       const response = await fetch(`${API_BASE_URL}/inquiries`, {
         method: 'POST',
@@ -39,7 +52,7 @@ const InquirySection = () => {
         <div className="row justify-content-center text-center mb-4">
           <div className="col-md-8">
             <h2 className="fw-bold" style={{ color: 'var(--lav-600)' }}>Have Questions?</h2>
-            <p className="text-muted">Send us an inquiry and we'll get back to you as soon as possible.</p>
+            <p className="text-muted">Send us an inquiry and we&apos;ll get back to you as soon as possible.</p>
           </div>
         </div>
         <div className="row justify-content-center">

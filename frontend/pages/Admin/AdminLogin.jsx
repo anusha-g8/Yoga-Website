@@ -13,6 +13,13 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { username, password } = credentials;
+    
+    if (!username.trim() || !password.trim()) {
+      setError('Username and password are required');
+      return;
+    }
+
     try {
       const response = await fetch(`${API_BASE_URL}/admin/login`, {
         method: 'POST',
@@ -41,8 +48,9 @@ const AdminLogin = () => {
               {error && <div className="alert alert-danger">{error}</div>}
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label className="form-label">Username</label>
+                  <label htmlFor="username" className="form-label">Username</label>
                   <input
+                    id="username"
                     type="text"
                     name="username"
                     className="form-control"
@@ -52,8 +60,9 @@ const AdminLogin = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Password</label>
+                  <label htmlFor="password" className="form-label">Password</label>
                   <input
+                    id="password"
                     type="password"
                     name="password"
                     className="form-control"

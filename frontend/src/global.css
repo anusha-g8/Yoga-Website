@@ -233,8 +233,8 @@ header {
   .navbar-logo { height: 56px; }
 }
 
-/* Instagram / social icon image */
-.instagram-icon {
+/* Instagram / YouTube / social icon image */
+.instagram-icon, .youtube-icon {
   height: 34px;
   width: auto;
   display: inline-block;
@@ -242,7 +242,11 @@ header {
 }
 
 @media (max-width: 576px) {
-  .instagram-icon { height: 28px; }
+  .instagram-icon, .youtube-icon { height: 28px; }
+}
+
+.table-danger-light {
+  background-color: rgba(220, 53, 69, 0.05);
 }
 
 /* Footer */

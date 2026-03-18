@@ -4,12 +4,15 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import helmet from 'helmet';
 import { initDb, query } from './src/db/index.js';
 import programRoutes from './src/routes/programRoutes.js';
 import scheduleRoutes from './src/routes/scheduleRoutes.js';
 import bookingRoutes from './src/routes/bookingRoutes.js';
 import inquiryRoutes from './src/routes/inquiryRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
+import videoRoutes from './src/routes/videoRoutes.js';
+import memberRoutes from './src/routes/memberRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -17,12 +20,33 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
+
+// Trust CloudFront proxy for HTTPS headers
+app.set('trust proxy', 1);
 
 // Middleware
+app.use(helmet({
+  contentSecurityPolicy: false,
+}));
+
+// Enforce HTTPS
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(`https://${req.hostname}${req.url}`);
+    }
+  }
+  next();
+});
+
 app.use(cors());
 app.use(express.json());
-app.use(morgan('dev'));
+
+// Custom morgan format for CloudWatch
+const morganFormat = '[:date[iso]] :method :url :status :res[content-length] - :response-time ms';
+app.use(morgan(morganFormat));
+
 app.use((req, res, next) => {
   console.log(`URL: ${req.url}, NODE_ENV: ${process.env.NODE_ENV}`);
   next();
@@ -34,6 +58,8 @@ app.use('/api/schedule', scheduleRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/videos', videoRoutes);
+app.use('/api/members', memberRoutes);
 
 // Health check route
 app.get('/api/health', async (req, res) => {
@@ -77,8 +103,12 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')
   });
 }
 
-app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`);
-  // Initialize database tables
-  await initDb();
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, async () => {
+    console.log(`Server is running on port ${PORT}`);
+    // Initialize database tables
+    await initDb();
+  });
+}
+
+export default app;
