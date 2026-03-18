@@ -12,11 +12,10 @@ const Videos = () => {
       try {
         const response = await fetch(`${API_BASE_URL}/videos`);
         const data = await response.json();
+        if (!response) throw new Error("No response");
         setVideos(Array.isArray(data) ? data : []);
         setLoading(false);
       } catch (error) {
-        const data = await error.response.json();
-        setVideos(Array.isArray(data) ? data : []);
         console.error('Error fetching videos:', error);
         setLoading(false);
       }
