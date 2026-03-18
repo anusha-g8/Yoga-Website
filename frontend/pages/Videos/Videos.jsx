@@ -17,6 +17,14 @@ const Videos = () => {
       desc: 'A powerful full body flow to release tension and build strength.',
       youtubeId: 'ZAlpjTIe0DA',
       url: 'https://www.youtube.com/watch?v=ZAlpjTIe0DA&t=913s'
+    },
+    {
+      title: '15 Min Yoga For Full Body Relief | Ease Sore Muscle, Tension & Tightness',
+      duration: '15:24',
+      level: 'All levels',
+      desc: 'A powerful full body flow to release tension and build strength.',
+      youtubeId: 'aQMDmg3yiUo',
+      url: 'https://www.youtube.com/watch?v=aQMDmg3yiUo'
     }
   ];
 
