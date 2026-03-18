@@ -1,4 +1,5 @@
 import * as MemberModel from '../models/memberModel.js';
+import * as BookingModel from '../models/bookingModel.js'; // Ensure this model exists
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -8,13 +9,11 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check if member already exists
     const existing = await MemberModel.getMemberByEmail(email);
     if (existing) {
       return res.status(400).json({ message: 'Member already exists' });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -24,7 +23,6 @@ export const register = async (req, res) => {
       password: hashedPassword
     });
 
-    // Create JWT
     const token = jwt.sign({ id: newMember.id }, JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({ 
@@ -40,19 +38,16 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find member
     const member = await MemberModel.getMemberByEmail(email);
     if (!member) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Verify password
     const isMatch = await bcrypt.compare(password, member.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Create JWT
     const token = jwt.sign({ id: member.id }, JWT_SECRET, { expiresIn: '7d' });
 
     res.json({ 
@@ -64,6 +59,10 @@ export const login = async (req, res) => {
   }
 };
 
+/**
+ * Fetches the specific member's profile
+ * Based on req.memberId from auth middleware
+ */
 export const getProfile = async (req, res) => {
   try {
     const member = await MemberModel.getMemberById(req.memberId);
@@ -71,6 +70,25 @@ export const getProfile = async (req, res) => {
     res.json(member);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching profile', error: error.message });
+  }
+};
+
+/**
+ * NEW: Fetches bookings associated with the logged-in member
+ */
+export const getMyBookings = async (req, res) => {
+  try {
+    // req.memberId is populated by your JWT/Auth middleware
+    const bookings = await BookingModel.getBookingsByMemberId(req.memberId);
+    
+    // Always return an array, even if empty, so the frontend .map() doesn't crash
+    res.json(bookings || []);
+  } catch (error) {
+    console.error('Controller Error (getMyBookings):', error);
+    res.status(500).json({ 
+      message: 'Error fetching your bookings', 
+      error: error.message 
+    });
   }
 };
 

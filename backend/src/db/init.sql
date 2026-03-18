@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   user_email VARCHAR(100) NOT NULL,
   class_id INTEGER REFERENCES schedule(id) ON DELETE CASCADE,
   program_id INTEGER REFERENCES programs(id) ON DELETE CASCADE,
+  member_id INTEGER REFERENCES members(id) ON DELETE CASCADE,
   status VARCHAR(20) DEFAULT 'pending',
   booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
