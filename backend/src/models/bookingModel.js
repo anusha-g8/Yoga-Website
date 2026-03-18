@@ -35,3 +35,18 @@ export const deleteBooking = async (id) => {
   const result = await query('DELETE FROM bookings WHERE id = $1 RETURNING *', [id]);
   return result.rows[0];
 };
+
+export const getBookingsByMemberId = async (memberId) => {
+  const result = await query(`
+    SELECT 
+      b.*, 
+      s.class_name as class_title, 
+      p.title as program_title 
+    FROM bookings b
+    LEFT JOIN schedule s ON b.class_id = s.id
+    LEFT JOIN programs p ON b.program_id = p.id
+    WHERE b.member_id = $1
+    ORDER BY b.booking_date DESC
+  `, [memberId]);
+  return result.rows;
+};

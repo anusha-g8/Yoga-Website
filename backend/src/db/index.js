@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 // Load environment-specific file if NODE_ENV is set
 const envFile = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
-dotenv.config({ path: path.resolve(process.cwd(), '../', envFile) });
+dotenv.config({ path: path.resolve(__dirname, '../../', envFile) });
 // Also try current directory for Docker environments
 dotenv.config(); 
 
