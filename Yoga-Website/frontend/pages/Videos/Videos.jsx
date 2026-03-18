@@ -15,6 +15,8 @@ const Videos = () => {
         setVideos(Array.isArray(data) ? data : []);
         setLoading(false);
       } catch (error) {
+        const data = await error.response.json();
+        setVideos(Array.isArray(data) ? data : []);
         console.error('Error fetching videos:', error);
         setLoading(false);
       }
