@@ -4,11 +4,12 @@ import { API_BASE_URL } from '../../src/config';
 
 const MemberDashboard = () => {
   const [profile, setProfile] = useState(null);
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchData = async () => {
       const token = localStorage.getItem('memberToken');
       if (!token) {
         navigate('/member/portal');
@@ -17,28 +18,38 @@ const MemberDashboard = () => {
 
       try {
         const apiUrl = API_BASE_URL || '/api';
-        const response = await fetch(`${apiUrl}/members/profile`, {
+        
+        // Fetch Profile
+        const profileRes = await fetch(`${apiUrl}/members/profile`, {
           headers: { 'x-auth-token': token }
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setProfile(data);
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          setProfile(profileData);
         } else {
-          console.warn(`Profile fetch failed with status ${response.status}`);
           localStorage.removeItem('memberToken');
           navigate('/member/portal');
+          return;
+        }
+
+        // Fetch Bookings
+        const bookingsRes = await fetch(`${apiUrl}/members/my-bookings`, {
+          headers: { 'x-auth-token': token }
+        });
+
+        if (bookingsRes.ok) {
+          const bookingsData = await bookingsRes.json();
+          setBookings(bookingsData);
         }
       } catch (err) {
-        console.error('Error fetching profile:', err);
-        // If it's a connection error, we might want to stay on the page but show an error
-        // For now, let's just log it as it usually means the session is invalid or server is down
+        console.error('Error fetching dashboard data:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfile();
+    fetchData();
   }, [navigate]);
 
   const handleLogout = () => {
@@ -47,63 +58,109 @@ const MemberDashboard = () => {
     navigate('/member/portal');
   };
 
-  if (loading) return <div className="container my-5 text-center">Loading Member Dashboard...</div>;
+  if (loading) return <div className='container my-5 text-center'>Loading Member Dashboard...</div>;
 
   return (
-    <div className="container my-5">
-      <div className="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+    <div className='container my-5'>
+      <div className='d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom'>
         <div>
-          <h1 className="mb-0" style={{ color: 'var(--lav-600)' }}>Member Dashboard</h1>
-          <p className="text-muted mb-0">Welcome back, {profile?.name}!</p>
+          <h1 className='mb-0' style={{ color: 'var(--lav-600)' }}>Member Dashboard</h1>
+          <p className='text-muted mb-0'>Welcome back, {profile?.name}!</p>
         </div>
-        <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
+        <button className='btn btn-outline-danger' onClick={handleLogout}>Logout</button>
       </div>
 
-      <div className="row g-4">
+      <div className='row g-4'>
         {/* Profile Summary */}
-        <div className="col-md-4">
-          <div className="card h-100 shadow-sm border-0">
-            <div className="card-body">
-              <h5 className="card-title fw-bold mb-3">My Profile</h5>
-              <p className="mb-1"><strong>Email:</strong> {profile?.email}</p>
-              <p className="mb-0 text-muted small">Member since {new Date(profile?.created_at).toLocaleDateString()}</p>
-              <button className="btn btn-sm btn-link p-0 mt-3">Edit Profile</button>
+        <div className='col-md-4'>
+          <div className='card h-100 shadow-sm border-0'>
+            <div className='card-body'>
+              <h5 className='card-title fw-bold mb-3'>My Profile</h5>
+              <p className='mb-1'><strong>Email:</strong> {profile?.email}</p>
+              <p className='mb-0 text-muted small'>Member since {new Date(profile?.created_at).toLocaleDateString()}</p>
+              <button className='btn btn-sm btn-link p-0 mt-3'>Edit Profile</button>
             </div>
           </div>
         </div>
 
-        {/* My Bookings Placeholder */}
-        <div className="col-md-8">
-          <div className="card h-100 shadow-sm border-0">
-            <div className="card-body">
-              <h5 className="card-title fw-bold mb-3">My Upcoming Classes</h5>
-              <div className="alert alert-light border-dashed text-center py-4">
-                <i className="bi bi-calendar2-week fs-2 text-muted mb-2 d-block"></i>
-                <p className="mb-0 text-muted">You have no upcoming bookings.</p>
-                <button className="btn btn-primary btn-sm mt-3" onClick={() => navigate('/calendar')}>Book a Class</button>
-              </div>
+        {/* My Bookings */}
+        <div className='col-md-8'>
+          <div className='card h-100 shadow-sm border-0'>
+            <div className='card-body'>
+              <h5 className='card-title fw-bold mb-3'>My Upcoming Classes</h5>
+              {bookings.length > 0 ? (
+                <div className='table-responsive'>
+                  <table className='table table-hover align-middle'>
+                    <thead className='table-light'>
+                      <tr>
+                        <th>Class/Program</th>
+                        <th>Date</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bookings.map((booking) => (
+                        <tr key={booking.id}>
+                          <td>
+                            <span className='fw-medium'>
+                              {booking.class_title || booking.program_title || 'Unnamed Item'}
+                            </span>
+                            <br />
+                            <small className='text-muted'>
+                              {booking.class_id ? 'Regular Class' : 'Special Program'}
+                            </small>
+                          </td>
+                          <td>{new Date(booking.booking_date).toLocaleDateString()}</td>
+                          <td>
+                            <span className={`badge ${
+                              booking.payment_status === 'paid' ? 'bg-info' : 'bg-light text-dark border'
+                            }`}>
+                              {booking.payment_status || 'unpaid'}
+                            </span>
+                          </td>
+                          <td>
+                            <span className={`badge ${
+                              booking.status === 'confirmed' ? 'bg-success' : 
+                              booking.status === 'pending' ? 'bg-warning' : 'bg-secondary'
+                            }`}>
+                              {booking.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className='alert alert-light border-dashed text-center py-4'>
+                  <i className='bi bi-calendar2-week fs-2 text-muted mb-2 d-block'></i>
+                  <p className='mb-0 text-muted'>You have no upcoming bookings.</p>
+                  <button className='btn btn-primary btn-sm mt-3' onClick={() => navigate('/calendar')}>Book a Class</button>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Member Exclusive Content */}
-        <div className="col-12">
-          <div className="card shadow-sm border-0">
-            <div className="card-body">
-              <h5 className="card-title fw-bold mb-4">Full-length Class Recordings</h5>
-              <div className="row g-3">
+        <div className='col-12'>
+          <div className='card shadow-sm border-0'>
+            <div className='card-body'>
+              <h5 className='card-title fw-bold mb-4'>Full-length Class Recordings</h5>
+              <div className='row g-3'>
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="col-md-4">
-                    <div className="bg-light rounded p-4 text-center border">
-                      <div className="mb-3 text-primary"><i className="bi bi-play-circle-fill fs-1"></i></div>
-                      <h6 className="fw-bold mb-1">Advanced Vinyasa Flow</h6>
-                      <p className="small text-muted mb-0">60 mins • Level: Intermediate</p>
+                  <div key={i} className='col-md-4'>
+                    <div className='bg-light rounded p-4 text-center border'>
+                      <div className='mb-3 text-primary'><i className='bi bi-play-circle-fill fs-1'></i></div>
+                      <h6 className='fw-bold mb-1'>Advanced Vinyasa Flow</h6>
+                      <p className='small text-muted mb-0'>60 mins • Level: Intermediate</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="text-center mt-4">
-                <button className="btn btn-outline-primary" onClick={() => navigate('/videos')}>Watch Sample Videos</button>
+              <div className='text-center mt-4'>
+                <button className='btn btn-outline-primary' onClick={() => navigate('/videos')}>Watch Sample Videos</button>
               </div>
             </div>
           </div>

@@ -10,6 +10,7 @@ const AdminDashboard = () => {
   const [inquiries, setInquiries] = useState([]);
   const [videos, setVideos] = useState([]);
   const [members, setMembers] = useState([]);
+  const [subscribers, setSubscribers] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -17,6 +18,7 @@ const AdminDashboard = () => {
   const [scheduleForm, setScheduleForm] = useState({ day: 'Monday', time: '', class_name: '', level: 'All levels' });
   const [programForm, setProgramForm] = useState({ title: '', description: '', level: 'Beginner', duration: '', price: '', image_url: '/assets/images/yoga1.jpg' });
   const [videoForm, setVideoForm] = useState({ title: '', description: '', level: 'Beginner', duration: '', youtube_id: '', url: '' });
+  const [broadcastForm, setBroadcastForm] = useState({ subject: '', message: '' });
 
   const [selectedBookings, setSelectedBookings] = useState([]);
   const [selectedSchedules, setSelectedSchedules] = useState([]);
@@ -24,6 +26,7 @@ const AdminDashboard = () => {
   const [selectedInquiries, setSelectedInquiries] = useState([]);
   const [selectedVideos, setSelectedVideos] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
+  const [selectedSubscribers, setSelectedSubscribers] = useState([]);
 
   // Editing state
   const [editingScheduleId, setEditingScheduleId] = useState(null);
@@ -52,6 +55,7 @@ const AdminDashboard = () => {
     setSelectedInquiries([]);
     setSelectedVideos([]);
     setSelectedMembers([]);
+    setSelectedSubscribers([]);
     setEditingScheduleId(null); // Clear editing on tab switch
     setEditingProgramId(null);
     setEditingVideoId(null);
@@ -60,7 +64,7 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const endpoints = ['bookings', 'schedule', 'programs', 'inquiries', 'videos', 'members'];
+      const endpoints = ['bookings', 'schedule', 'programs', 'inquiries', 'videos', 'members', 'newsletter/subscribers'];
       
       const results = await Promise.allSettled(
         endpoints.map(ep => fetch(`${API_BASE_URL}/${ep}`, {
@@ -80,7 +84,7 @@ const AdminDashboard = () => {
         }
       });
 
-      const [bookingsData, scheduleData, programsData, inquiriesData, videosData, membersData] = data;
+      const [bookingsData, scheduleData, programsData, inquiriesData, videosData, membersData, subscribersData] = data;
       
       setBookings(Array.isArray(bookingsData) ? bookingsData : []);
       setSchedule(Array.isArray(scheduleData) ? scheduleData : []);
@@ -88,6 +92,7 @@ const AdminDashboard = () => {
       setInquiries(Array.isArray(inquiriesData) ? inquiriesData : []);
       setVideos(Array.isArray(videosData) ? videosData : []);
       setMembers(Array.isArray(membersData) ? membersData : []);
+      setSubscribers(Array.isArray(subscribersData) ? subscribersData : []);
       
     } catch (err) {
       console.error('Critical error in fetchData:', err);
@@ -98,6 +103,7 @@ const AdminDashboard = () => {
       setSelectedInquiries([]);
       setSelectedVideos([]);
       setSelectedMembers([]);
+      setSelectedSubscribers([]);
       setLoading(false);
     }
   };
@@ -557,6 +563,62 @@ const AdminDashboard = () => {
     );
   };
 
+  const handleSelectOneSubscriber = (id) => {
+    setSelectedSubscribers(prev => 
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAllSubscriber = () => {
+    if (selectedSubscribers.length === subscribers.length) {
+      setSelectedSubscribers([]);
+    } else {
+      setSelectedSubscribers(subscribers.map(s => s.id));
+    }
+  };
+
+  const handleBulkDeleteSubscriber = async (ids) => {
+    if (!ids.length) return;
+    const confirmMsg = ids.length === subscribers.length 
+      ? `Delete ALL ${ids.length} subscribers?`
+      : `Delete ${ids.length} selected subscribers?`;
+    
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      const deletePromises = ids.map(id => 
+        fetch(`${API_BASE_URL}/newsletter/subscribers/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        })
+      );
+      await Promise.all(deletePromises);
+      alert('Subscribers deleted successfully');
+      fetchData();
+    } catch (err) {
+      console.error('Bulk delete error:', err);
+      alert('Error during bulk deletion');
+    }
+  };
+
+  const handleDeleteSubscriber = async (id) => {
+    if (!window.confirm('Remove this subscriber?')) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/newsletter/subscribers/${id}`, { 
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('adminToken') }
+        });
+      if (response.ok) {
+        alert('Subscriber removed');
+        fetchData();
+      } else {
+        alert('Failed to delete subscriber');
+      }
+    } catch (err) {
+      console.error('Error deleting subscriber:', err);
+    }
+  };
+
   const handleSelectAllMember = () => {
     if (selectedMembers.length === members.length) {
       setSelectedMembers([]);
@@ -668,6 +730,38 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleBroadcastSubmit = async (e) => {
+    e.preventDefault();
+    const { subject, message } = broadcastForm;
+    if (!subject.trim() || !message.trim()) {
+      alert('Subject and message are required');
+      return;
+    }
+
+    if (!window.confirm(`Send this email to all ${subscribers.length} subscribers?`)) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/newsletter/broadcast`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('adminToken')
+        },
+        body: JSON.stringify(broadcastForm)
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.message);
+        setBroadcastForm({ subject: '', message: '' });
+      } else {
+        alert(data.message || 'Failed to send broadcast');
+      }
+    } catch (err) {
+      console.error('Error sending broadcast:', err);
+      alert('Error connecting to the server');
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     navigate('/admin');
@@ -700,6 +794,9 @@ const AdminDashboard = () => {
         </li>
         <li className="nav-item">
           <button className={`nav-link ${activeTab === 'members' ? 'active' : ''}`} onClick={() => setActiveTab('members')}>Members</button>
+        </li>
+        <li className="nav-item">
+          <button className={`nav-link ${activeTab === 'newsletter' ? 'active' : ''}`} onClick={() => setActiveTab('newsletter')}>Newsletter</button>
         </li>
       </ul>
 
@@ -1104,7 +1201,7 @@ const AdminDashboard = () => {
                         <td>{p.title}</td>
                         <td>{p.level}</td>
                         <td>{p.duration}</td>
-                        <td>${p.price}</td>
+                        <td>€{p.price}</td>
                         <td>
                           <div className="btn-group">
                             <button className="btn btn-sm btn-outline-primary me-1" onClick={() => startEditingProgram(p)}>Edit</button>
@@ -1434,6 +1531,116 @@ const AdminDashboard = () => {
                 {members.length === 0 && (
                   <tr>
                     <td colSpan="6" className="text-center py-4 text-muted">No members found</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Newsletter Tab */}
+      {activeTab === 'newsletter' && (
+        <div>
+          <div className="card shadow-sm border-0 mb-4">
+            <div className="card-body p-4">
+              <h5 className="card-title fw-bold mb-3">Compose Broadcast Email</h5>
+              <p className="text-muted small mb-4">This message will be sent to all {subscribers.length} subscribers.</p>
+              <form onSubmit={handleBroadcastSubmit}>
+                <div className="mb-3">
+                  <label className="form-label">Subject</label>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="E.g., New Classes Starting Next Week!"
+                    value={broadcastForm.subject}
+                    onChange={(e) => setBroadcastForm({...broadcastForm, subject: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Message / Letter</label>
+                  <textarea 
+                    className="form-control" 
+                    rows="6" 
+                    placeholder="Write your email content here..."
+                    value={broadcastForm.message}
+                    onChange={(e) => setBroadcastForm({...broadcastForm, message: e.target.value})}
+                    required
+                  ></textarea>
+                </div>
+                <div className="d-flex justify-content-end">
+                  <button type="submit" className="btn btn-primary" disabled={subscribers.length === 0}>
+                    <i className="bi bi-send me-2"></i>Send to All Subscribers
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <hr className="my-4" />
+          <h5 className="fw-bold mb-3">Manage Subscribers</h5>
+          
+          {/* Bulk Actions for Subscribers */}
+          <div className="d-flex flex-wrap gap-2 mb-3 align-items-center bg-light p-3 rounded border">
+            <div className="me-auto">
+              <span className="fw-bold">{selectedSubscribers.length}</span> subscribers selected
+            </div>
+            <button 
+              className="btn btn-sm btn-danger" 
+              disabled={selectedSubscribers.length === 0}
+              onClick={() => handleBulkDeleteSubscriber(selectedSubscribers)}
+            >
+              Delete Selected
+            </button>
+            <div className="vr mx-2 d-none d-md-block"></div>
+            <button 
+              className="btn btn-sm btn-outline-danger" 
+              disabled={subscribers.length === 0}
+              onClick={() => handleBulkDeleteSubscriber(subscribers.map(s => s.id))}
+            >
+              Delete All
+            </button>
+          </div>
+
+          <div className="table-responsive">
+            <table className="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th style={{ width: '40px' }}>
+                    <input 
+                      type="checkbox" 
+                      className="form-check-input"
+                      checked={subscribers.length > 0 && selectedSubscribers.length === subscribers.length}
+                      onChange={handleSelectAllSubscriber}
+                    />
+                  </th>
+                  <th>Email</th>
+                  <th>Subscribed Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {subscribers.map((s) => (
+                  <tr key={s.id} className={selectedSubscribers.includes(s.id) ? 'table-danger-light' : ''}>
+                    <td>
+                      <input 
+                        type="checkbox" 
+                        className="form-check-input"
+                        checked={selectedSubscribers.includes(s.id)}
+                        onChange={() => handleSelectOneSubscriber(s.id)}
+                      />
+                    </td>
+                    <td>{s.email}</td>
+                    <td>{new Date(s.subscribed_at).toLocaleDateString()}</td>
+                    <td>
+                      <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteSubscriber(s.id)}>Delete</button>
+                    </td>
+                  </tr>
+                ))}
+                {subscribers.length === 0 && (
+                  <tr>
+                    <td colSpan="4" className="text-center py-4 text-muted">No subscribers found</td>
                   </tr>
                 )}
               </tbody>

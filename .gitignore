@@ -23,6 +23,45 @@ frontend/.DS_Store
 .DS_Store
 Thumbs.db
 
+# AI Tools and IDEs
+.claude/
+.windsurf/
+.trae/
+.roo/
+.continue/
+.codebuddy/
+.agent/
+.agents/
+.augment/
+.adal/
+.cortex/
+.crush/
+.factory/
+.goose/
+.iflow/
+.junie/
+.kiro/
+.kode/
+.pi/
+.pochi/
+.qoder/
+.qwen/
+.vibe/
+.zencoder/
+.mux/
+.mcpjam/
+.neovate/
+.openhands/
+.commandcode/
+.kilocode/
+.factory/
+skills/
+skills-lock.json
+.vscode/
+.idea/
+
 #secure files
 *.pem
+
+*npm*
 

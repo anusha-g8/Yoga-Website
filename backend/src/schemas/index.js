@@ -23,7 +23,9 @@ export const bookingSchema = z.object({
   user_name: z.string().min(1, 'Name is required'),
   user_email: z.string().email('Invalid email format'),
   class_id: z.number().int().optional().nullable(),
-  program_id: z.number().int().optional().nullable()
+  program_id: z.number().int().optional().nullable(),
+  payment_status: z.string().optional().nullable(),
+  stripe_payment_intent_id: z.string().optional().nullable()
 }).refine(data => data.class_id || data.program_id, {
   message: "Either class_id or program_id must be provided",
   path: ["class_id"]
@@ -48,20 +50,25 @@ export const videoSchema = z.object({
 
 // Admin Login Schema
 export const adminLoginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
+  username: z.string().min(1, 'Username is required').toLowerCase().trim(),
   password: z.string().min(1, 'Password is required')
 });
 
 // Member Schemas
 export const memberRegisterSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100),
-  email: z.string().email('Invalid email format'),
+  name: z.string().min(1, 'Name is required').max(100).trim(),
+  email: z.string().email('Invalid email format').toLowerCase().trim(),
   password: z.string().min(6, 'Password must be at least 6 characters')
 });
 
 export const memberLoginSchema = z.object({
-  email: z.string().email('Invalid email format'),
+  email: z.string().email('Invalid email format').toLowerCase().trim(),
   password: z.string().min(1, 'Password is required')
+});
+
+// Newsletter Schema
+export const newsletterSchema = z.object({
+  email: z.string().email('Invalid email format').toLowerCase().trim()
 });
 
 // ID Parameter Schema

@@ -13,6 +13,8 @@ import inquiryRoutes from './src/routes/inquiryRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
 import videoRoutes from './src/routes/videoRoutes.js';
 import memberRoutes from './src/routes/memberRoutes.js';
+import newsletterRoutes from './src/routes/newsletterRoutes.js';
+import paymentRoutes from './src/routes/paymentRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -60,6 +62,8 @@ app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/members', memberRoutes);
+app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Health check route
 app.get('/api/health', async (req, res) => {
@@ -102,6 +106,16 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')
     res.sendFile(path.resolve(frontendPath, 'index.html'));
   });
 }
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('GLOBAL ERROR:', err);
+  res.status(500).json({ 
+    message: 'Internal Server Error', 
+    error: err.message,
+    stack: process.env.NODE_ENV === 'dev' ? err.stack : undefined
+  });
+});
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, async () => {

@@ -42,22 +42,33 @@ const Calendar = () => {
   }, []);
 
   const handleBook = async (classId) => {
-    // Simple mock booking for now - would ideally open a modal
-    const userName = prompt('Enter your name:');
-    if (!userName) {
-      alert('Name is required for booking');
-      return;
-    }
-    const userEmail = prompt('Enter your email:');
-    if (!userEmail) {
-      alert('Email is required for booking');
-      return;
+    const token = localStorage.getItem('memberToken');
+    const storedName = localStorage.getItem('memberName');
+    const storedEmail = localStorage.getItem('memberEmail');
+
+    let userName = storedName;
+    let userEmail = storedEmail;
+
+    if (!token || !userName || !userEmail) {
+      userName = prompt('Enter your name:', storedName || '');
+      if (!userName) {
+        alert('Name is required for booking');
+        return;
+      }
+      userEmail = prompt('Enter your email:', storedEmail || '');
+      if (!userEmail) {
+        alert('Email is required for booking');
+        return;
+      }
     }
 
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['x-auth-token'] = token;
+
       const response = await fetch(`${API_BASE_URL}/bookings`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ user_name: userName, user_email: userEmail, class_id: classId })
       });
       if (response.ok) {
@@ -70,21 +81,21 @@ const Calendar = () => {
     }
   };
 
-  if (loading) return <div className="container my-5 text-center">Loading schedule...</div>;
+  if (loading) return <div className='container my-5 text-center'>Loading schedule...</div>;
 
   return (
-    <div className="container my-5">
-      <h1 className="text-center mb-5" style={{ color: 'var(--lav-600)' }}>Class Schedule</h1>
+    <div className='container my-5'>
+      <h1 className='text-center mb-5' style={{ color: 'var(--lav-600)' }}>Class Schedule</h1>
 
       {bookingStatus.type === 'error' && (
-        <div className="alert alert-danger text-center mb-4">
+        <div className='alert alert-danger text-center mb-4'>
           {bookingStatus.message}
         </div>
       )}
 
-      <div className="table-responsive shadow-sm rounded">
-        <table className="table table-hover align-middle mb-0">
-          <thead className="table-light">
+      <div className='table-responsive shadow-sm rounded'>
+        <table className='table table-hover align-middle mb-0'>
+          <thead className='table-light'>
             <tr>
               <th>Day</th>
               <th>Time</th>
@@ -97,13 +108,13 @@ const Calendar = () => {
             {schedule.length > 0 ? (
               schedule.map((item) => (
                 <tr key={item.id}>
-                  <td className="fw-bold">{item.day}</td>
+                  <td className='fw-bold'>{item.day}</td>
                   <td>{item.time}</td>
                   <td>{item.class_name}</td>
-                  <td><span className="badge bg-light text-dark border">{item.level}</span></td>
+                  <td><span className='badge bg-light text-dark border'>{item.level}</span></td>
                   <td>
                     <button 
-                      className="btn btn-sm btn-outline-primary"
+                      className='btn btn-sm btn-outline-primary'
                       onClick={() => handleBook(item.id)}
                     >
                       Book Class
@@ -113,7 +124,7 @@ const Calendar = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center py-4 text-muted">
+                <td colSpan='5' className='text-center py-4 text-muted'>
                   {bookingStatus.type === 'error' ? 'Could not load schedule' : 'No classes scheduled for this week.'}
                 </td>
               </tr>
@@ -121,7 +132,7 @@ const Calendar = () => {
           </tbody>
         </table>
       </div>
-      <p className="mt-4 text-muted text-center small">
+      <p className='mt-4 text-muted text-center small'>
         * All classes are currently held online via Zoom. Link provided upon booking.
       </p>
     </div>

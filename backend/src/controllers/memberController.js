@@ -35,26 +35,36 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  console.log('Login attempt for email:', req.body.email);
   try {
     const { email, password } = req.body;
 
+    console.log('Fetching member...');
     const member = await MemberModel.getMemberByEmail(email);
+    console.log('Member found:', !!member);
+    
     if (!member) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
+    console.log('Comparing passwords...');
     const isMatch = await bcrypt.compare(password, member.password);
+    console.log('Password match:', isMatch);
+    
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
+    console.log('Signing JWT...');
     const token = jwt.sign({ id: member.id }, JWT_SECRET, { expiresIn: '7d' });
 
+    console.log('Login successful');
     res.json({ 
       token, 
       member: { id: member.id, name: member.name, email: member.email } 
     });
   } catch (error) {
+    console.error('Login Error details:', error);
     res.status(500).json({ message: 'Error logging in', error: error.message });
   }
 };

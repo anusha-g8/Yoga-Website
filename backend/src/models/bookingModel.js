@@ -1,10 +1,10 @@
 import { query } from '../db/index.js';
 
 export const createBooking = async (bookingData) => {
-  const { user_name, user_email, class_id, program_id } = bookingData;
+  const { user_name, user_email, class_id, program_id, member_id, payment_status, stripe_payment_intent_id } = bookingData;
   const result = await query(
-    'INSERT INTO bookings (user_name, user_email, class_id, program_id) VALUES ($1, $2, $3, $4) RETURNING *',
-    [user_name, user_email, class_id, program_id]
+    'INSERT INTO bookings (user_name, user_email, class_id, program_id, member_id, payment_status, stripe_payment_intent_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+    [user_name, user_email, class_id, program_id, member_id, payment_status || 'unpaid', stripe_payment_intent_id || null]
   );
   return result.rows[0];
 };

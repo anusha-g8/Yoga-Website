@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 
+import { API_BASE_URL } from '../../src/config';
+
 const Newsletter = () => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState({ type: '', message: '' });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim()) {
       setStatus({ type: 'error', message: 'Email is required.' });
@@ -16,9 +18,22 @@ const Newsletter = () => {
       return;
     }
     
-    // Simulate API call
-    setStatus({ type: 'success', message: 'Thank you for subscribing!' });
-    setEmail('');
+    try {
+      const response = await fetch(`${API_BASE_URL}/newsletter/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setStatus({ type: 'success', message: 'Thank you for subscribing!' });
+        setEmail('');
+      } else {
+        setStatus({ type: 'error', message: data.message || 'Subscription failed.' });
+      }
+    } catch (err) {
+      setStatus({ type: 'error', message: 'Server error. Please try again later.' });
+    }
     setTimeout(() => setStatus({ type: '', message: '' }), 5000);
   };
 

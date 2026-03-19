@@ -25,11 +25,17 @@ const MemberPortal = () => {
     const endpoint = isLogin ? '/members/login' : '/members/register';
     const apiUrl = API_BASE_URL || '/api';
     
+    // Normalize email before sending
+    const submissionData = {
+      ...formData,
+      email: formData.email.toLowerCase()
+    };
+    
     try {
       const response = await fetch(`${apiUrl}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(submissionData)
       });
 
       let data;
@@ -44,6 +50,7 @@ const MemberPortal = () => {
       if (response.ok) {
         localStorage.setItem('memberToken', data.token);
         localStorage.setItem('memberName', data.member?.name || 'Member');
+        localStorage.setItem('memberEmail', data.member?.email || '');
         navigate('/member/dashboard');
       } else {
         setError(data.message || 'Authentication failed');

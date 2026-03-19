@@ -31,8 +31,12 @@ CREATE TABLE IF NOT EXISTS videos (
 );
 
 -- 2. Ensure unique constraints exist for handling conflicts
+-- Deduplicate before adding constraint
 DO $$ 
 BEGIN 
+    DELETE FROM programs a USING programs b 
+    WHERE a.id > b.id AND a.title = b.title;
+
     IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'programs_title_key') THEN
         ALTER TABLE programs ADD CONSTRAINT programs_title_key UNIQUE (title);
     END IF;
@@ -40,6 +44,9 @@ END $$;
 
 DO $$ 
 BEGIN 
+    DELETE FROM schedule a USING schedule b 
+    WHERE a.id > b.id AND a.day = b.day AND a.time = b.time AND a.class_name = b.class_name;
+
     IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'schedule_unique_class') THEN
         ALTER TABLE schedule ADD CONSTRAINT schedule_unique_class UNIQUE (day, time, class_name);
     END IF;
@@ -47,6 +54,9 @@ END $$;
 
 DO $$ 
 BEGIN 
+    DELETE FROM videos a USING videos b 
+    WHERE a.id > b.id AND a.youtube_id = b.youtube_id;
+
     IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'videos_youtube_id_key') THEN
         ALTER TABLE videos ADD CONSTRAINT videos_youtube_id_key UNIQUE (youtube_id);
     END IF;
@@ -69,6 +79,8 @@ CREATE TABLE IF NOT EXISTS bookings (
   program_id INTEGER REFERENCES programs(id) ON DELETE CASCADE,
   member_id INTEGER REFERENCES members(id) ON DELETE CASCADE,
   status VARCHAR(20) DEFAULT 'pending',
+  payment_status VARCHAR(20) DEFAULT 'unpaid',
+  stripe_payment_intent_id VARCHAR(255),
   booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -78,6 +90,12 @@ CREATE TABLE IF NOT EXISTS inquiries (
   user_email VARCHAR(100) NOT NULL,
   message TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 4. Seed initial data

@@ -6,7 +6,7 @@ export const getAllMembers = async () => {
 };
 
 export const getMemberByEmail = async (email) => {
-  const result = await query('SELECT * FROM members WHERE email = $1', [email]);
+  const result = await query('SELECT * FROM members WHERE LOWER(email) = LOWER($1)', [email]);
   return result.rows[0];
 };
 

@@ -19,6 +19,21 @@ export const auth = (req, res, next) => {
   }
 };
 
+export const optionalAuth = (req, res, next) => {
+  const token = req.header('x-auth-token');
+  if (!token) return next();
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.memberId = decoded.id;
+    next();
+  } catch (err) {
+    // If token is provided but invalid, we still proceed as guest but log it
+    console.warn('Optional auth token invalid:', err.message);
+    next();
+  }
+};
+
 export const adminAuth = (req, res, next) => {
   const token = req.header('x-auth-token');
 

@@ -31,6 +31,6 @@ describe('Courses Page', () => {
 
     expect(screen.getByText(/Online Courses & Packages/i)).toBeInTheDocument();
     expect(screen.getByText(/Yoga for Stress/i)).toBeInTheDocument();
-    expect(screen.getByText(/\$99/i)).toBeInTheDocument();
+    expect(screen.getByText(/€99/i)).toBeInTheDocument();
   });
 });
