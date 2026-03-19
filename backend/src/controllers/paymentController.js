@@ -2,13 +2,25 @@ import Stripe from 'stripe';
 import * as ProgramModel from '../models/programModel.js';
 import * as BookingModel from '../models/bookingModel.js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Lazy-load Stripe to avoid crash if API key is missing during import
+let stripe;
+const getStripe = () => {
+  if (!stripe) {
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key || key === 'your_stripe_secret_key_here') {
+      throw new Error('Stripe Secret Key is not configured in .env');
+    }
+    stripe = new Stripe(key);
+  }
+  return stripe;
+};
 
 /**
  * Creates a Payment Intent for a program/class
  */
 export const createPaymentIntent = async (req, res) => {
   try {
+    const stripeInstance = getStripe();
     const { program_id, user_email } = req.body;
 
     if (!program_id) {
@@ -26,7 +38,7 @@ export const createPaymentIntent = async (req, res) => {
     const amount = Math.round(program.price * 100); // Stripe expects amounts in cents/cents-equivalent
 
     // Create a PaymentIntent with the order amount and currency
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await stripeInstance.paymentIntents.create({
       amount: amount,
       currency: 'eur', // We changed prices to Euros
       automatic_payment_methods: {
@@ -55,7 +67,8 @@ export const handleWebhook = async (req, res) => {
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    const stripeInstance = getStripe();
+    event = stripeInstance.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error(`Webhook Error: ${err.message}`);
     return res.status(400).send(`Webhook Error: ${err.message}`);
