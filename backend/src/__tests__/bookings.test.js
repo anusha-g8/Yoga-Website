@@ -2,8 +2,10 @@ import { describe, it, expect, vi } from 'vitest';
 import request from 'supertest';
 import app from '../../server.js';
 import * as BookingModel from '../models/bookingModel.js';
+import * as MemberModel from '../models/memberModel.js';
 
 vi.mock('../models/bookingModel.js');
+vi.mock('../models/memberModel.js');
 
 describe('Bookings API', () => {
   it('GET /api/bookings should return all bookings', async () => {
@@ -19,6 +21,7 @@ describe('Bookings API', () => {
 
   it('POST /api/bookings should create a booking', async () => {
     const newBooking = { user_name: 'Jane Doe', user_email: 'jane@example.com', class_id: 1 };
+    vi.mocked(MemberModel.getMemberByEmail).mockResolvedValue(null);
     vi.mocked(BookingModel.createBooking).mockResolvedValue({ id: 2, ...newBooking, status: 'pending' });
 
     const res = await request(app).post('/api/bookings').send(newBooking);
