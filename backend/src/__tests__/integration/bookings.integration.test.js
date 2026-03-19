@@ -32,7 +32,10 @@ describe('Bookings Integration Tests', () => {
       booking_date: new Date().toISOString()
     };
 
-    // 1. Mock the INSERT for creation
+    // 1. Mock the member lookup (triggered by our new fallback logic)
+    db.query.mockResolvedValueOnce({ rows: [] }); // Not found as member
+    
+    // 2. Mock the INSERT for creation
     db.query.mockResolvedValueOnce({ rows: [mockBooking] });
 
     const postRes = await request(app)
