@@ -97,19 +97,20 @@ jobs:
 
             # 3. Environment and Deployment
             cat <<EOF > .env.staging
-DB_USER="${{ secrets.DB_USER }}"
-DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-DB_NAME="${{ secrets.DB_NAME }}"
-STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}"
-STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}"
-JWT_SECRET="${{ secrets.JWT_SECRET }}"
-ADMIN_USER="${{ secrets.ADMIN_USER }}"
-ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}"
-ADMIN_TOKEN="${{ secrets.ADMIN_TOKEN }}"
-EMAIL_USER="${{ secrets.EMAIL_USER }}"
-EMAIL_PASS="${{ secrets.EMAIL_PASS }}"
-EMAIL_FROM="${{ secrets.EMAIL_FROM }}"
-EOF
+            DB_USER="${{ secrets.DB_USER }}"
+            DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            DB_NAME="${{ secrets.DB_NAME }}"
+            STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}"
+            STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}"
+            JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            ADMIN_USER="${{ secrets.ADMIN_USER }}"
+            ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}"
+            ADMIN_TOKEN="${{ secrets.ADMIN_TOKEN }}"
+            EMAIL_USER="${{ secrets.EMAIL_USER }}"
+            EMAIL_PASS="${{ secrets.EMAIL_PASS }}"
+            EMAIL_FROM="${{ secrets.EMAIL_FROM }}"
+            EOF
+            sed -i 's/^[[:space:]]*//' .env.staging
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
             echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> frontend/src/config.js
             sudo docker compose --env-file .env.staging up -d --build
@@ -178,19 +179,20 @@ EOF
 
             # 3. Environment and Deployment
             cat <<EOF > .env.prod
-DB_USER="${{ secrets.DB_USER }}"
-DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-DB_NAME="${{ secrets.DB_NAME }}"
-STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}"
-STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}"
-JWT_SECRET="${{ secrets.JWT_SECRET }}"
-ADMIN_USER="${{ secrets.ADMIN_USER }}"
-ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}"
-ADMIN_TOKEN="${{ secrets.ADMIN_TOKEN }}"
-EMAIL_USER="${{ secrets.EMAIL_USER }}"
-EMAIL_PASS="${{ secrets.EMAIL_PASS }}"
-EMAIL_FROM="${{ secrets.EMAIL_FROM }}"
-EOF
+            DB_USER="${{ secrets.DB_USER }}"
+            DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            DB_NAME="${{ secrets.DB_NAME }}"
+            STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}"
+            STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}"
+            JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            ADMIN_USER="${{ secrets.ADMIN_USER }}"
+            ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}"
+            ADMIN_TOKEN="${{ secrets.ADMIN_TOKEN }}"
+            EMAIL_USER="${{ secrets.EMAIL_USER }}"
+            EMAIL_PASS="${{ secrets.EMAIL_PASS }}"
+            EMAIL_FROM="${{ secrets.EMAIL_FROM }}"
+            EOF
+            sed -i 's/^[[:space:]]*//' .env.prod
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
             echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> frontend/src/config.js
             sudo docker compose --env-file .env.prod up -d --build
