@@ -96,7 +96,19 @@ jobs:
             git reset --hard origin/staging
 
             # 3. Environment and Deployment
-            touch .env.staging
+            echo "DB_USER=${{ secrets.DB_USER }}" > .env.staging
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env.staging
+            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env.staging
+            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env.staging
+            echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}" >> .env.staging
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env.staging
+            echo "ADMIN_USER=${{ secrets.ADMIN_USER }}" >> .env.staging
+            echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" >> .env.staging
+            echo "ADMIN_TOKEN=${{ secrets.ADMIN_TOKEN }}" >> .env.staging
+            echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env.staging
+            echo "EMAIL_PASS=${{ secrets.EMAIL_PASS }}" >> .env.staging
+            echo "EMAIL_FROM=${{ secrets.EMAIL_FROM }}" >> .env.staging
+            
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
             echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> frontend/src/config.js
             sudo docker compose --env-file .env.staging up -d --build
@@ -164,7 +176,19 @@ jobs:
             git reset --hard origin/main
 
             # 3. Environment and Deployment
-            touch .env.prod
+            echo "DB_USER=${{ secrets.DB_USER }}" > .env.prod
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env.prod
+            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env.prod
+            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env.prod
+            echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}" >> .env.prod
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env.prod
+            echo "ADMIN_USER=${{ secrets.ADMIN_USER }}" >> .env.prod
+            echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" >> .env.prod
+            echo "ADMIN_TOKEN=${{ secrets.ADMIN_TOKEN }}" >> .env.prod
+            echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env.prod
+            echo "EMAIL_PASS=${{ secrets.EMAIL_PASS }}" >> .env.prod
+            echo "EMAIL_FROM=${{ secrets.EMAIL_FROM }}" >> .env.prod
+            
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
             echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> frontend/src/config.js
             sudo docker compose --env-file .env.prod up -d --build
