@@ -1,6 +1,15 @@
 import { query } from '../db/index.js';
 
 export const subscribe = async (email) => {
+  // Ensure table exists (as fallback)
+  await query(`
+    CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+      id SERIAL PRIMARY KEY,
+      email VARCHAR(100) UNIQUE NOT NULL,
+      subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   const result = await query(
     'INSERT INTO newsletter_subscribers (email) VALUES ($1) ON CONFLICT (email) DO UPDATE SET subscribed_at = CURRENT_TIMESTAMP RETURNING *',
     [email]
