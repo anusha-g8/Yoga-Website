@@ -31,7 +31,10 @@ describe('Inquiries Integration Tests', () => {
       created_at: new Date().toISOString() 
     };
 
-    // 1. Mock the INSERT
+    // 1. Mock the CREATE TABLE (fallback)
+    db.query.mockResolvedValueOnce({});
+    
+    // 2. Mock the INSERT
     db.query.mockResolvedValueOnce({ rows: [mockInquiry] });
 
     const postRes = await request(app)
