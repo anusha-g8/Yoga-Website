@@ -16,7 +16,10 @@ jobs:
       
       - name: Install Frontend Dependencies
         working-directory: frontend
-        run: npm install
+        run: |
+          echo "export const API_BASE_URL = '/api';" > src/config.js
+          echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> src/config.js
+          npm install
         
       - name: Run Frontend Tests
         working-directory: frontend
@@ -49,6 +52,7 @@ jobs:
         working-directory: frontend
         run: |
           echo "export const API_BASE_URL = '/api';" > src/config.js
+          echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> src/config.js
           npm install
           npm run build
           
@@ -93,6 +97,7 @@ jobs:
             # 3. Environment and Deployment
             touch .env.staging
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
+            echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> frontend/src/config.js
             sudo docker compose --env-file .env.staging up -d --build
 
   deploy-production:
@@ -114,6 +119,7 @@ jobs:
         working-directory: frontend
         run: |
           echo "export const API_BASE_URL = '/api';" > src/config.js
+          echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> src/config.js
           npm install
           npm run build
           
@@ -158,4 +164,5 @@ jobs:
             # 3. Environment and Deployment
             touch .env.prod
             echo "export const API_BASE_URL = '/api';" > frontend/src/config.js
+            echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> frontend/src/config.js
             sudo docker compose --env-file .env.prod up -d --build
