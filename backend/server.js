@@ -42,7 +42,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://d3d5zpzj4lgzr9.cloudfront.net',
+    'https://d1v8v8v8v8v8v8.cloudfront.net', // Placeholder for prod if different
+    'http://localhost:5173',
+    'http://localhost:8080'
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 // Custom morgan format for CloudWatch
