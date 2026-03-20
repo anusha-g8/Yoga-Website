@@ -53,7 +53,7 @@ jobs:
       - name: Build Frontend
         working-directory: frontend
         run: |
-          echo "export const API_BASE_URL = 'http://${{ secrets.STAGING_EC2_IP }}:5005/api';" > src/config.js
+          echo "export const API_BASE_URL = 'http://${{ secrets.STAGING_EC2_IP }}:5000/api';" > src/config.js
           echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> src/config.js
           npm install
           npm run build
@@ -111,7 +111,7 @@ jobs:
             echo "EMAIL_PASS='${{ secrets.EMAIL_PASS }}'" >> .env.staging
             echo "EMAIL_FROM='${{ secrets.EMAIL_FROM }}'" >> .env.staging
             
-            echo "export const API_BASE_URL = 'http://${{ secrets.STAGING_EC2_IP }}:5005/api';" > frontend/src/config.js
+            echo "export const API_BASE_URL = 'http://${{ secrets.STAGING_EC2_IP }}:5000/api';" > frontend/src/config.js
             echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> frontend/src/config.js
             sudo docker compose --env-file .env.staging up -d --build
 
@@ -133,7 +133,7 @@ jobs:
       - name: Build Frontend
         working-directory: frontend
         run: |
-          echo "export const API_BASE_URL = 'http://${{ secrets.PROD_EC2_IP }}:5005/api';" > src/config.js
+          echo "export const API_BASE_URL = 'http://${{ secrets.PROD_EC2_IP }}:5000/api';" > src/config.js
           echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> src/config.js
           npm install
           npm run build
@@ -191,6 +191,6 @@ jobs:
             echo "EMAIL_PASS='${{ secrets.EMAIL_PASS }}'" >> .env.prod
             echo "EMAIL_FROM='${{ secrets.EMAIL_FROM }}'" >> .env.prod
             
-            echo "export const API_BASE_URL = 'http://${{ secrets.PROD_EC2_IP }}:5005/api';" > frontend/src/config.js
+            echo "export const API_BASE_URL = 'http://${{ secrets.PROD_EC2_IP }}:5000/api';" > frontend/src/config.js
             echo "export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TAtb3FmkvhMUNsVRtElmaRrw4vOUxtoFuDF1LfdPTScr1S4pHVZi0jumKk2V51ISnwEqXLAsdOxSwQsdCdwF0fE00SMYTf5aS';" >> frontend/src/config.js
             sudo docker compose --env-file .env.prod up -d --build
