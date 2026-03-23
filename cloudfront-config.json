@@ -1,7 +1,7 @@
 {
-    "CallerReference": "yoga-website-frontend-1773231290",
+    "CallerReference": "yoga-website-frontend-1773231290-v2",
     "Origins": {
-        "Quantity": 1,
+        "Quantity": 2,
         "Items": [
             {
                 "Id": "S3-yoga-website-frontend-1773231290",
@@ -10,6 +10,15 @@
                     "OriginAccessIdentity": ""
                 },
                 "OriginAccessControlId": "E1ZY7818LH2NG9"
+            },
+            {
+                "Id": "EC2-yoga-backend-staging",
+                "DomainName": "18.192.174.173",
+                "CustomOriginConfig": {
+                    "HTTPPort": 5005,
+                    "HTTPSPort": 443,
+                    "OriginProtocolPolicy": "http-only"
+                }
             }
         ]
     },
@@ -43,9 +52,33 @@
         }
     },
     "CacheBehaviors": {
-        "Quantity": 0
+        "Quantity": 1,
+        "Items": [
+            {
+                "PathPattern": "/api/*",
+                "TargetOriginId": "EC2-yoga-backend-staging",
+                "ViewerProtocolPolicy": "https-only",
+                "AllowedMethods": {
+                    "Quantity": 7,
+                    "Items": ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+                },
+                "ForwardedValues": {
+                    "QueryString": true,
+                    "Cookies": {
+                        "Forward": "all"
+                    },
+                    "Headers": {
+                        "Quantity": 1,
+                        "Items": ["*"]
+                    }
+                },
+                "MinTTL": 0,
+                "DefaultTTL": 0,
+                "MaxTTL": 0
+            }
+        ]
     },
-    "Comment": "CloudFront for Yoga Website Frontend (Staging)",
+    "Comment": "CloudFront for Yoga Website Frontend (Staging) with API routing",
     "Enabled": true,
     "DefaultRootObject": "index.html",
     "CustomErrorResponses": {
