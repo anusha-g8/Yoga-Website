@@ -1,5 +1,5 @@
 {
-    "CallerReference": "yoga-website-frontend-1773231290-v4",
+    "CallerReference": "yoga-website-frontend-1773231290-v5",
     "Aliases": {
         "Quantity": 0
     },
@@ -26,7 +26,7 @@
             },
             {
                 "Id": "EC2-yoga-backend-staging",
-                "DomainName": "18.192.174.173",
+                "DomainName": "ec2-18-192-174-173.eu-central-1.compute.amazonaws.com",
                 "OriginPath": "",
                 "CustomHeaders": {
                     "Quantity": 0
@@ -159,7 +159,7 @@
             }
         ]
     },
-    "Comment": "CloudFront for Yoga Website Frontend (Staging) with API routing v4",
+    "Comment": "CloudFront for Yoga Website Frontend (Staging) with API routing v5",
     "Logging": {
         "Enabled": false,
         "IncludeCookies": false,
