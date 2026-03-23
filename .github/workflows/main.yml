@@ -1,6 +1,6 @@
 name: Yoga Website CI/CD
-# Deployment Trigger: 2026-03-20 15:10
-# CloudFront API Routing and Standard Env
+# Deployment Trigger: 2026-03-20 15:20
+# Unified /api Routing via CloudFront
 
 on:
   push:
@@ -49,12 +49,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
-      # 1. Update CloudFront Configuration (Optional but recommended)
-      - name: Update CloudFront Config
+      # 1. Update CloudFront Configuration for API Routing
+      - name: Update CloudFront Config (Staging)
         run: |
-          # Note: This requires the STAGING_CLOUDFRONT_ID secret
-          # and the cloudfront-config.json to be valid
-          aws cloudfront update-distribution --id ${{ secrets.STAGING_CLOUDFRONT_ID }} --if-match $(aws cloudfront get-distribution-config --id ${{ secrets.STAGING_CLOUDFRONT_ID }} --query 'ETag' --output text) --distribution-config file://cloudfront-config.json || echo "Skipping CF update (likely already updated or ETag mismatch)"
+          ETAG=$(aws cloudfront get-distribution-config --id ${{ secrets.STAGING_CLOUDFRONT_ID }} --query 'ETag' --output text)
+          aws cloudfront update-distribution --id ${{ secrets.STAGING_CLOUDFRONT_ID }} --if-match $ETAG --distribution-config file://cloudfront-config.json
 
       # 2. Frontend Build & Deploy to S3
       - name: Build Frontend
@@ -132,7 +131,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
-      # 1. Frontend Build & Deploy to S3
+      # 1. Update CloudFront Configuration for API Routing
+      - name: Update CloudFront Config (Production)
+        run: |
+          ETAG=$(aws cloudfront get-distribution-config --id ${{ secrets.PROD_CLOUDFRONT_ID }} --query 'ETag' --output text)
+          aws cloudfront update-distribution --id ${{ secrets.PROD_CLOUDFRONT_ID }} --if-match $ETAG --distribution-config file://cloudfront-config-prod.json
+
+      # 2. Frontend Build & Deploy to S3
       - name: Build Frontend
         working-directory: frontend
         run: |
@@ -150,7 +155,7 @@ jobs:
         run: |
           aws cloudfront create-invalidation --distribution-id ${{ secrets.PROD_CLOUDFRONT_ID }} --paths "/*"
 
-      # 2. Backend Deploy to EC2
+      # 3. Backend Deploy to EC2
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@master
         with:
