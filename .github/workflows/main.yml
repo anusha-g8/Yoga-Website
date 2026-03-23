@@ -1,6 +1,6 @@
 name: Yoga Website CI/CD
-# Deployment Trigger: 2026-03-20 15:35
-# CloudFront Update Fix: Remove CallerReference
+# Deployment Trigger: 2026-03-20 15:45
+# CloudFront Update Fix: Sync CallerReference
 
 on:
   push:
@@ -52,17 +52,14 @@ jobs:
       # 1. Update CloudFront Configuration for API Routing
       - name: Update CloudFront Config (Staging)
         run: |
-          # Use jq to remove CallerReference which cannot be modified during update
-          # Also ensure we are getting only the DistributionConfig part
           aws cloudfront get-distribution-config --id ${{ secrets.STAGING_CLOUDFRONT_ID }} > full-config.json
           ETAG=$(jq -r '.ETag' full-config.json)
-          jq '.DistributionConfig | del(.CallerReference)' full-config.json > staging-config-update.json
+          CALLER_REF=$(jq -r '.DistributionConfig.CallerReference' full-config.json)
           
-          # Now merge our local changes (origins and behaviors) into the existing config
-          # For simplicity here, we'll use our pre-prepared file but remove the CallerReference
-          jq 'del(.CallerReference)' cloudfront-config.json > final-staging-config.json
+          # Inject the existing CallerReference into our new config to satisfy AWS requirements
+          jq --arg ref "$CALLER_REF" '.CallerReference = $ref' cloudfront-config.json > staging-config-with-ref.json
           
-          aws cloudfront update-distribution --id ${{ secrets.STAGING_CLOUDFRONT_ID }} --if-match $ETAG --distribution-config file://final-staging-config.json
+          aws cloudfront update-distribution --id ${{ secrets.STAGING_CLOUDFRONT_ID }} --if-match $ETAG --distribution-config file://staging-config-with-ref.json
 
       # 2. Frontend Build & Deploy to S3
       - name: Build Frontend
@@ -145,8 +142,12 @@ jobs:
         run: |
           aws cloudfront get-distribution-config --id ${{ secrets.PROD_CLOUDFRONT_ID }} > full-config-prod.json
           ETAG=$(jq -r '.ETag' full-config-prod.json)
-          jq 'del(.CallerReference)' cloudfront-config-prod.json > final-prod-config.json
-          aws cloudfront update-distribution --id ${{ secrets.PROD_CLOUDFRONT_ID }} --if-match $ETAG --distribution-config file://final-prod-config.json
+          CALLER_REF=$(jq -r '.DistributionConfig.CallerReference' full-config-prod.json)
+          
+          # Inject the existing CallerReference into our new config
+          jq --arg ref "$CALLER_REF" '.CallerReference = $ref' cloudfront-config-prod.json > prod-config-with-ref.json
+          
+          aws cloudfront update-distribution --id ${{ secrets.PROD_CLOUDFRONT_ID }} --if-match $ETAG --distribution-config file://prod-config-with-ref.json
 
       # 2. Frontend Build & Deploy to S3
       - name: Build Frontend
