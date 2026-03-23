@@ -1,5 +1,5 @@
 {
-    "CallerReference": "yoga-website-frontend-1773231290-v3",
+    "CallerReference": "yoga-website-frontend-1773231290-v4",
     "Aliases": {
         "Quantity": 0
     },
@@ -40,7 +40,7 @@
                         "Items": ["TLSv1", "TLSv1.1", "TLSv1.2"]
                     },
                     "OriginReadTimeout": 30,
-                    "ConnectionTimeout": 10
+                    "OriginKeepaliveTimeout": 5
                 },
                 "ConnectionAttempts": 3,
                 "ConnectionTimeout": 10,
@@ -114,11 +114,11 @@
                 "ViewerProtocolPolicy": "https-only",
                 "AllowedMethods": {
                     "Quantity": 7,
-                    "Items": ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
-                },
-                "CachedMethods": {
-                    "Quantity": 2,
-                    "Items": ["GET", "HEAD"]
+                    "Items": ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"],
+                    "CachedMethods": {
+                        "Quantity": 2,
+                        "Items": ["GET", "HEAD"]
+                    }
                 },
                 "SmoothStreaming": false,
                 "Compress": false,
@@ -159,7 +159,7 @@
             }
         ]
     },
-    "Comment": "CloudFront for Yoga Website Frontend (Staging) with API routing v3",
+    "Comment": "CloudFront for Yoga Website Frontend (Staging) with API routing v4",
     "Logging": {
         "Enabled": false,
         "IncludeCookies": false,
