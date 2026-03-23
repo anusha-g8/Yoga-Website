@@ -1,55 +1,101 @@
 {
-    "CallerReference": "yoga-website-frontend-prod-1773231290-v2",
+    "CallerReference": "yoga-website-frontend-prod-1773231290-v3",
+    "Aliases": {
+        "Quantity": 0
+    },
+    "DefaultRootObject": "index.html",
     "Origins": {
         "Quantity": 2,
         "Items": [
             {
                 "Id": "S3-yoga-website-frontend-prod-1773231290",
                 "DomainName": "yoga-website-frontend-prod-1773231290.s3.eu-central-1.amazonaws.com",
+                "OriginPath": "",
+                "CustomHeaders": {
+                    "Quantity": 0
+                },
                 "S3OriginConfig": {
                     "OriginAccessIdentity": ""
+                },
+                "ConnectionAttempts": 3,
+                "ConnectionTimeout": 10,
+                "OriginShield": {
+                    "Enabled": false
                 },
                 "OriginAccessControlId": "E1N3JXB4D4B7TI"
             },
             {
                 "Id": "EC2-yoga-backend-prod",
                 "DomainName": "3.76.81.81",
+                "OriginPath": "",
+                "CustomHeaders": {
+                    "Quantity": 0
+                },
                 "CustomOriginConfig": {
                     "HTTPPort": 5005,
                     "HTTPSPort": 443,
-                    "OriginProtocolPolicy": "http-only"
+                    "OriginProtocolPolicy": "http-only",
+                    "OriginSslProtocols": {
+                        "Quantity": 3,
+                        "Items": ["TLSv1", "TLSv1.1", "TLSv1.2"]
+                    },
+                    "OriginReadTimeout": 30,
+                    "ConnectionTimeout": 10
+                },
+                "ConnectionAttempts": 3,
+                "ConnectionTimeout": 10,
+                "OriginShield": {
+                    "Enabled": false
                 }
             }
         ]
     },
+    "OriginGroups": {
+        "Quantity": 0
+    },
     "DefaultCacheBehavior": {
         "TargetOriginId": "S3-yoga-website-frontend-prod-1773231290",
-        "ForwardedValues": {
-            "QueryString": false,
-            "Cookies": {
-                "Forward": "none"
-            }
-        },
         "TrustedSigners": {
             "Enabled": false,
             "Quantity": 0
         },
+        "TrustedKeyGroups": {
+            "Enabled": false,
+            "Quantity": 0
+        },
         "ViewerProtocolPolicy": "redirect-to-https",
-        "MinTTL": 0,
         "AllowedMethods": {
             "Quantity": 2,
-            "Items": [
-                "GET",
-                "HEAD"
-            ],
+            "Items": ["HEAD", "GET"],
             "CachedMethods": {
                 "Quantity": 2,
-                "Items": [
-                    "GET",
-                    "HEAD"
-                ]
+                "Items": ["HEAD", "GET"]
             }
-        }
+        },
+        "SmoothStreaming": false,
+        "Compress": true,
+        "LambdaFunctionAssociations": {
+            "Quantity": 0
+        },
+        "FunctionAssociations": {
+            "Quantity": 0
+        },
+        "FieldLevelEncryptionId": "",
+        "ForwardedValues": {
+            "QueryString": false,
+            "Cookies": {
+                "Forward": "none"
+            },
+            "Headers": {
+                "Quantity": 0
+            },
+            "QueryStringCacheKeys": {
+                "Quantity": 0
+            }
+        },
+        "MinTTL": 0,
+        "DefaultTTL": 86400,
+        "MaxTTL": 31536000
     },
     "CacheBehaviors": {
         "Quantity": 1,
@@ -57,11 +103,32 @@
             {
                 "PathPattern": "/api/*",
                 "TargetOriginId": "EC2-yoga-backend-prod",
+                "TrustedSigners": {
+                    "Enabled": false,
+                    "Quantity": 0
+                },
+                "TrustedKeyGroups": {
+                    "Enabled": false,
+                    "Quantity": 0
+                },
                 "ViewerProtocolPolicy": "https-only",
                 "AllowedMethods": {
                     "Quantity": 7,
                     "Items": ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
                 },
+                "CachedMethods": {
+                    "Quantity": 2,
+                    "Items": ["GET", "HEAD"]
+                },
+                "SmoothStreaming": false,
+                "Compress": false,
+                "LambdaFunctionAssociations": {
+                    "Quantity": 0
+                },
+                "FunctionAssociations": {
+                    "Quantity": 0
+                },
+                "FieldLevelEncryptionId": "",
                 "ForwardedValues": {
                     "QueryString": true,
                     "Cookies": {
@@ -70,6 +137,9 @@
                     "Headers": {
                         "Quantity": 1,
                         "Items": ["*"]
+                    },
+                    "QueryStringCacheKeys": {
+                        "Quantity": 0
                     }
                 },
                 "MinTTL": 0,
@@ -78,9 +148,6 @@
             }
         ]
     },
-    "Comment": "CloudFront for Yoga Website Frontend (Production) with API routing",
-    "Enabled": true,
-    "DefaultRootObject": "index.html",
     "CustomErrorResponses": {
         "Quantity": 1,
         "Items": [
@@ -91,5 +158,31 @@
                 "ErrorCachingMinTTL": 10
             }
         ]
-    }
+    },
+    "Comment": "CloudFront for Yoga Website Frontend (Production) with API routing v3",
+    "Logging": {
+        "Enabled": false,
+        "IncludeCookies": false,
+        "Bucket": "",
+        "Prefix": ""
+    },
+    "PriceClass": "PriceClass_All",
+    "Enabled": true,
+    "ViewerCertificate": {
+        "CloudFrontDefaultCertificate": true,
+        "SSLSupportMethod": "vip",
+        "MinimumProtocolVersion": "TLSv1",
+        "CertificateSource": "cloudfront"
+    },
+    "Restrictions": {
+        "GeoRestriction": {
+            "RestrictionType": "none",
+            "Quantity": 0
+        }
+    },
+    "WebACLId": "",
+    "HttpVersion": "http2",
+    "IsIPV6Enabled": true,
+    "ContinuousDeploymentPolicyId": "",
+    "Staging": false
 }
