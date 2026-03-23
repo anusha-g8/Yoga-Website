@@ -1,6 +1,6 @@
 name: Yoga Website CI/CD
-# Deployment Trigger: 2026-03-20 15:20
-# Unified /api Routing via CloudFront
+# Deployment Trigger: 2026-03-20 15:35
+# CloudFront Update Fix: Remove CallerReference
 
 on:
   push:
@@ -52,8 +52,17 @@ jobs:
       # 1. Update CloudFront Configuration for API Routing
       - name: Update CloudFront Config (Staging)
         run: |
-          ETAG=$(aws cloudfront get-distribution-config --id ${{ secrets.STAGING_CLOUDFRONT_ID }} --query 'ETag' --output text)
-          aws cloudfront update-distribution --id ${{ secrets.STAGING_CLOUDFRONT_ID }} --if-match $ETAG --distribution-config file://cloudfront-config.json
+          # Use jq to remove CallerReference which cannot be modified during update
+          # Also ensure we are getting only the DistributionConfig part
+          aws cloudfront get-distribution-config --id ${{ secrets.STAGING_CLOUDFRONT_ID }} > full-config.json
+          ETAG=$(jq -r '.ETag' full-config.json)
+          jq '.DistributionConfig | del(.CallerReference)' full-config.json > staging-config-update.json
+          
+          # Now merge our local changes (origins and behaviors) into the existing config
+          # For simplicity here, we'll use our pre-prepared file but remove the CallerReference
+          jq 'del(.CallerReference)' cloudfront-config.json > final-staging-config.json
+          
+          aws cloudfront update-distribution --id ${{ secrets.STAGING_CLOUDFRONT_ID }} --if-match $ETAG --distribution-config file://final-staging-config.json
 
       # 2. Frontend Build & Deploy to S3
       - name: Build Frontend
@@ -134,8 +143,10 @@ jobs:
       # 1. Update CloudFront Configuration for API Routing
       - name: Update CloudFront Config (Production)
         run: |
-          ETAG=$(aws cloudfront get-distribution-config --id ${{ secrets.PROD_CLOUDFRONT_ID }} --query 'ETag' --output text)
-          aws cloudfront update-distribution --id ${{ secrets.PROD_CLOUDFRONT_ID }} --if-match $ETAG --distribution-config file://cloudfront-config-prod.json
+          aws cloudfront get-distribution-config --id ${{ secrets.PROD_CLOUDFRONT_ID }} > full-config-prod.json
+          ETAG=$(jq -r '.ETag' full-config-prod.json)
+          jq 'del(.CallerReference)' cloudfront-config-prod.json > final-prod-config.json
+          aws cloudfront update-distribution --id ${{ secrets.PROD_CLOUDFRONT_ID }} --if-match $ETAG --distribution-config file://final-prod-config.json
 
       # 2. Frontend Build & Deploy to S3
       - name: Build Frontend
