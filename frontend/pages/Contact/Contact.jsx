@@ -1,5 +1,6 @@
 import { API_BASE_URL } from '../../src/config';
 import React, { useState } from 'react';
+import { trackActivity } from '../../src/utils/tracker';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -34,14 +35,25 @@ const Contact = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
+
       if (response.ok) {
         setStatus({ type: 'success', message: 'Inquiry sent successfully!' });
         setFormData({ user_name: '', user_email: '', message: '' });
+        trackActivity({
+          type: 'INQUIRY_SUBMITTED',
+          description: 'User sent a contact inquiry'
+        });
       } else {
         setStatus({ type: 'danger', message: 'Failed to send inquiry.' });
       }
     } catch (error) {
+      console.error('Inquiry error:', error);
       setStatus({ type: 'danger', message: 'Error connecting to server.' });
+      trackActivity({
+        type: 'INQUIRY_ERROR',
+        description: 'Failed to send contact inquiry',
+        metadata: { error: error.message }
+      });
     }
   };
 

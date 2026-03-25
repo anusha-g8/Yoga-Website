@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from '../../components/Payment/CheckoutForm';
+import { trackActivity } from '../../src/utils/tracker';
 
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
@@ -78,6 +79,11 @@ const Courses = () => {
       if (response.ok) {
         setClientSecret(data.clientSecret);
         setShowCheckout(true);
+        trackActivity({
+          type: 'PAYMENT_INITIATED',
+          description: `Started enrollment for ${course.title}`,
+          metadata: { programId, courseTitle: course.title }
+        });
       } else {
         alert(data.message || 'Failed to initialize payment.');
       }
@@ -111,6 +117,11 @@ const Courses = () => {
         alert('Enrollment successful! You can now access the course in your dashboard.');
         setShowCheckout(false);
         setClientSecret("");
+        trackActivity({
+          type: 'ENROLLMENT_SUCCESS',
+          description: `Successfully enrolled in ${selectedCourse?.title}`,
+          metadata: { programId, courseTitle: selectedCourse?.title, paymentIntentId }
+        });
       } else {
         alert('Payment confirmed but enrollment record failed. Please contact support.');
       }

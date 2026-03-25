@@ -1,6 +1,7 @@
 import { API_BASE_URL } from '../../src/config';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { trackActivity } from '../../src/utils/tracker';
 
 const AdminLogin = () => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
@@ -34,12 +35,29 @@ const AdminLogin = () => {
       const data = await response.json();
       if (data.success) {
         localStorage.setItem('adminToken', data.token);
+        
+        trackActivity({
+          type: 'ADMIN_LOGIN',
+          description: `Admin ${submissionData.username} logged in`,
+          metadata: { username: submissionData.username }
+        });
+
         navigate('/admin/dashboard');
       } else {
         setError(data.message || 'Login failed');
+        trackActivity({
+          type: 'ADMIN_LOGIN_FAILED',
+          description: `Failed admin login attempt for ${submissionData.username}`,
+          metadata: { username: submissionData.username, error: data.message }
+        });
       }
     } catch (err) {
       setError('Connection error');
+      trackActivity({
+        type: 'ADMIN_LOGIN_ERROR',
+        description: 'Connection error during admin login',
+        metadata: { error: err.message }
+      });
     }
   };
 

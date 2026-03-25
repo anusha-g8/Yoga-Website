@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Home from '../pages/Home/Home.jsx';
 import About from '../pages/About/About.jsx';
 import Calendar from '../pages/Calendar/Calendar.jsx';
@@ -11,10 +11,26 @@ import AdminDashboard from '../pages/Admin/AdminDashboard.jsx';
 import MemberPortal from '../pages/Member/MemberPortal.jsx';
 import MemberDashboard from '../pages/Member/MemberDashboard.jsx';
 import Layout from '../components/Common/Layout.jsx';
+import { trackActivity } from './utils/tracker';
+
+const NavigationTracker = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    trackActivity({
+      type: 'PAGE_VIEW',
+      description: `Visited ${location.pathname}`,
+      isTraffic: true
+    });
+  }, [location]);
+
+  return null;
+};
 
 const App = () => {
   return (
     <BrowserRouter>
+      <NavigationTracker />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />

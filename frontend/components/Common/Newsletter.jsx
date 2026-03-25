@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-
 import { API_BASE_URL } from '../../src/config';
+import { trackActivity } from '../../src/utils/tracker';
 
 const Newsletter = () => {
   const [email, setEmail] = useState('');
@@ -28,10 +28,15 @@ const Newsletter = () => {
       if (response.ok) {
         setStatus({ type: 'success', message: 'Thank you for subscribing!' });
         setEmail('');
+        trackActivity({
+          type: 'NEWSLETTER_SIGNUP',
+          description: 'User subscribed to newsletter'
+        });
       } else {
         setStatus({ type: 'error', message: data.message || 'Subscription failed.' });
       }
     } catch (err) {
+      console.error('Newsletter error:', err);
       setStatus({ type: 'error', message: 'Server error. Please try again later.' });
     }
     setTimeout(() => setStatus({ type: '', message: '' }), 5000);

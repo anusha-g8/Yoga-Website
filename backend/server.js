@@ -15,6 +15,8 @@ import videoRoutes from './src/routes/videoRoutes.js';
 import memberRoutes from './src/routes/memberRoutes.js';
 import newsletterRoutes from './src/routes/newsletterRoutes.js';
 import paymentRoutes from './src/routes/paymentRoutes.js';
+import monitoringRoutes from './src/routes/monitoringRoutes.js';
+import { auditMiddleware } from './src/middleware/audit.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -31,6 +33,9 @@ app.set('trust proxy', 1);
 app.use(helmet({
   contentSecurityPolicy: false,
 }));
+
+// Apply audit middleware before routes to capture all activity
+app.use(auditMiddleware);
 
 // Enforce HTTPS
 app.use((req, res, next) => {
@@ -72,6 +77,7 @@ app.use('/api/videos', videoRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/monitoring', monitoringRoutes);
 
 // Health check route
 app.get('/api/health', async (req, res) => {

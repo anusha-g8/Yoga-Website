@@ -98,6 +98,24 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
   subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS site_traffic (
+  id SERIAL PRIMARY KEY,
+  ip_address VARCHAR(45),
+  user_agent TEXT,
+  path VARCHAR(255),
+  referrer TEXT,
+  visited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS user_activities (
+  id SERIAL PRIMARY KEY,
+  member_id INTEGER REFERENCES members(id) ON DELETE SET NULL,
+  activity_type VARCHAR(100) NOT NULL,
+  description TEXT,
+  metadata JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 4. Seed initial data
 INSERT INTO programs (title, description, level, duration, price, image_url)
 VALUES 

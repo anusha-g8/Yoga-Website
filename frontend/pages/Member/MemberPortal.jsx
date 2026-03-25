@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../src/config';
+import { trackActivity } from '../../src/utils/tracker';
 
 const MemberPortal = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -51,15 +52,34 @@ const MemberPortal = () => {
         localStorage.setItem('memberToken', data.token);
         localStorage.setItem('memberName', data.member?.name || 'Member');
         localStorage.setItem('memberEmail', data.member?.email || '');
+        
+        trackActivity({
+          type: isLogin ? 'MEMBER_LOGIN' : 'MEMBER_REGISTER',
+          description: `User ${isLogin ? 'logged in' : 'registered'} successfully`,
+          metadata: { email: submissionData.email }
+        });
+
         navigate('/member/dashboard');
       } else {
         setError(data.message || 'Authentication failed');
+        trackActivity({
+          type: 'AUTH_FAILED',
+          description: `Failed ${isLogin ? 'login' : 'registration'} attempt`,
+          metadata: { email: submissionData.email, error: data.message }
+        });
       }
     } catch (err) {
       console.error('Portal error:', err);
-      setError(err.message === 'Failed to fetch' 
+      const msg = err.message === 'Failed to fetch' 
         ? 'Cannot connect to server. Please ensure the backend is running.' 
-        : `Error: ${err.message}`);
+        : `Error: ${err.message}`;
+      setError(msg);
+      
+      trackActivity({
+        type: 'AUTH_ERROR',
+        description: 'Connection error during authentication',
+        metadata: { error: err.message }
+      });
     } finally {
       setLoading(false);
     }
