@@ -2,6 +2,7 @@ import { query } from '../db/index.js';
 
 export const subscribe = async (email) => {
   // Ensure table exists (as fallback)
+  console.log('Checking/Creating newsletter table...');
   await query(`
     CREATE TABLE IF NOT EXISTS newsletter_subscribers (
       id SERIAL PRIMARY KEY,
@@ -10,10 +11,12 @@ export const subscribe = async (email) => {
     )
   `);
 
+  console.log('Inserting subscriber:', email);
   const result = await query(
     'INSERT INTO newsletter_subscribers (email) VALUES ($1) ON CONFLICT (email) DO UPDATE SET subscribed_at = CURRENT_TIMESTAMP RETURNING *',
     [email]
   );
+  console.log('Insert result:', result?.rows ? result.rows[0] : 'No rows returned');
   return result.rows[0];
 };
 

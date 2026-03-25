@@ -5,9 +5,12 @@ import * as EmailService from '../utils/emailService.js';
 export const subscribe = async (req, res) => {
   try {
     const { email } = req.body;
+    console.log('Newsletter subscription attempt for:', email);
     const subscriber = await NewsletterModel.subscribe(email);
+    console.log('Newsletter subscription successful:', subscriber);
     res.status(201).json({ message: 'Subscribed successfully', subscriber });
   } catch (error) {
+    console.error('Newsletter Subscription Error:', error);
     res.status(500).json({ message: 'Error subscribing to newsletter', error: error.message });
   }
 };
