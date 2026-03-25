@@ -637,7 +637,7 @@ const AdminDashboard = () => {
           <div className="card shadow-sm border-0">
             <div className="card-header bg-white py-3 d-flex justify-content-between align-items-center">
               <h5 className="mb-0 fw-bold">User Activity Log</h5>
-              <button className="btn btn-sm btn-outline-primary" onClick={fetchData}>Refresh</button>
+              <button className="btn btn-sm btn-outline-primary" onClick={fetchData} aria-label="Refresh">Refresh</button>
             </div>
             <div className="card-body p-0">
               <div className="table-responsive" style={{ maxHeight: '600px' }}>
@@ -777,19 +777,19 @@ const AdminDashboard = () => {
                   </div>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Time</label>
-                    <input type="text" className="form-control" placeholder="e.g. 08:00 - 09:00" 
+                    <input type="text" className="form-control" placeholder="Time" 
                       value={editingScheduleId ? editScheduleForm.time : newSchedule.time} 
                       onChange={e => editingScheduleId ? setEditScheduleForm({...editScheduleForm, time: e.target.value}) : setNewSchedule({...newSchedule, time: e.target.value})} required />
                   </div>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Class Name</label>
-                    <input type="text" className="form-control" placeholder="e.g. Hatha Yoga" 
+                    <input type="text" className="form-control" placeholder="Class Name" 
                       value={editingScheduleId ? editScheduleForm.class_name : newSchedule.class_name} 
                       onChange={e => editingScheduleId ? setEditScheduleForm({...editScheduleForm, class_name: e.target.value}) : setNewSchedule({...newSchedule, class_name: e.target.value})} required />
                   </div>
                   <div className="mb-4">
                     <label className="form-label small fw-bold text-muted">Level</label>
-                    <input type="text" className="form-control" placeholder="e.g. Beginner" 
+                    <input type="text" className="form-control" placeholder="Level" 
                       value={editingScheduleId ? editScheduleForm.level : newSchedule.level} 
                       onChange={e => editingScheduleId ? setEditScheduleForm({...editScheduleForm, level: e.target.value}) : setNewSchedule({...newSchedule, level: e.target.value})} required />
                   </div>
@@ -834,10 +834,10 @@ const AdminDashboard = () => {
                         <td className="fw-bold">{item.class_name}</td>
                         <td><span className="small text-muted">{item.level}</span></td>
                         <td className="text-end text-nowrap">
-                          <button className="btn btn-sm btn-light border me-2" onClick={() => handleEditSchedule(item)}>
+                          <button className="btn btn-sm btn-light border me-2" onClick={() => handleEditSchedule(item)} aria-label="Edit">
                             <i className="bi bi-pencil"></i>
                           </button>
-                          <button className="btn btn-sm btn-outline-danger" onClick={() => deleteScheduleItem(item.id)}>
+                          <button className="btn btn-sm btn-outline-danger" onClick={() => deleteScheduleItem(item.id)} aria-label="Delete">
                             <i className="bi bi-trash"></i>
                           </button>
                         </td>
@@ -860,27 +860,27 @@ const AdminDashboard = () => {
                 <form onSubmit={editingProgramId ? (e) => { e.preventDefault(); saveEditProgram(editingProgramId); } : handleAddProgram}>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Title</label>
-                    <input type="text" className="form-control" value={editingProgramId ? editProgramForm.title : newProgram.title} 
+                    <input type="text" className="form-control" placeholder="Title" value={editingProgramId ? editProgramForm.title : newProgram.title} 
                       onChange={e => editingProgramId ? setEditProgramForm({...editProgramForm, title: e.target.value}) : setNewProgram({...newProgram, title: e.target.value})} required />
                   </div>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Price (€)</label>
-                    <input type="number" step="0.01" className="form-control" value={editingProgramId ? editProgramForm.price : newProgram.price} 
+                    <input type="number" step="0.01" className="form-control" placeholder="Price" value={editingProgramId ? editProgramForm.price : newProgram.price} 
                       onChange={e => editingProgramId ? setEditProgramForm({...editProgramForm, price: e.target.value}) : setNewProgram({...newProgram, price: e.target.value})} required />
                   </div>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Duration</label>
-                    <input type="text" className="form-control" placeholder="e.g. 4 weeks" value={editingProgramId ? editProgramForm.duration : newProgram.duration} 
+                    <input type="text" className="form-control" placeholder="Duration" value={editingProgramId ? editProgramForm.duration : newProgram.duration} 
                       onChange={e => editingProgramId ? setEditProgramForm({...editProgramForm, duration: e.target.value}) : setNewProgram({...newProgram, duration: e.target.value})} required />
                   </div>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Description</label>
-                    <textarea className="form-control" rows="3" value={editingProgramId ? editProgramForm.description : newProgram.description} 
+                    <textarea className="form-control" rows="3" placeholder="Description" value={editingProgramId ? editProgramForm.description : newProgram.description} 
                       onChange={e => editingProgramId ? setEditProgramForm({...editProgramForm, description: e.target.value}) : setNewProgram({...newProgram, description: e.target.value})} required />
                   </div>
                   <div className="mb-4">
                     <label className="form-label small fw-bold text-muted">Image Path</label>
-                    <input type="text" className="form-control" value={editingProgramId ? editProgramForm.image_url : newProgram.image_url} 
+                    <input type="text" className="form-control" placeholder="Image Path" value={editingProgramId ? editProgramForm.image_url : newProgram.image_url} 
                       onChange={e => editingProgramId ? setEditProgramForm({...editProgramForm, image_url: e.target.value}) : setNewProgram({...newProgram, image_url: e.target.value})} required />
                   </div>
                   <div className="d-flex gap-2">
@@ -922,10 +922,10 @@ const AdminDashboard = () => {
                         <td className="small text-muted">{p.duration} • {p.level}</td>
                         <td className="fw-bold text-primary">€{p.price}</td>
                         <td className="text-end text-nowrap">
-                          <button className="btn btn-sm btn-light border me-2" onClick={() => handleEditProgram(p)}>
+                          <button className="btn btn-sm btn-light border me-2" onClick={() => handleEditProgram(p)} aria-label="Edit">
                             <i className="bi bi-pencil"></i>
                           </button>
-                          <button className="btn btn-sm btn-outline-danger" onClick={() => deleteProgram(p.id)}>
+                          <button className="btn btn-sm btn-outline-danger" onClick={() => deleteProgram(p.id)} aria-label="Delete">
                             <i className="bi bi-trash"></i>
                           </button>
                         </td>
@@ -948,17 +948,17 @@ const AdminDashboard = () => {
                 <form onSubmit={editingVideoId ? (e) => { e.preventDefault(); saveEditVideo(editingVideoId); } : handleAddVideo}>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Title</label>
-                    <input type="text" className="form-control" value={editingVideoId ? editVideoForm.title : newVideo.title} 
+                    <input type="text" className="form-control" placeholder="Title" value={editingVideoId ? editVideoForm.title : newVideo.title} 
                       onChange={e => editingVideoId ? setEditVideoForm({...editVideoForm, title: e.target.value}) : setNewVideo({...newVideo, title: e.target.value})} required />
                   </div>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">YouTube ID</label>
-                    <input type="text" className="form-control" placeholder="e.g. Y2RcO6TKO4s" value={editingVideoId ? editVideoForm.youtube_id : newVideo.youtube_id} 
+                    <input type="text" className="form-control" placeholder="YouTube ID" value={editingVideoId ? editVideoForm.youtube_id : newVideo.youtube_id} 
                       onChange={e => editingVideoId ? setEditVideoForm({...editVideoForm, youtube_id: e.target.value}) : setNewVideo({...newVideo, youtube_id: e.target.value})} required />
                   </div>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Duration</label>
-                    <input type="text" className="form-control" placeholder="e.g. 15:00" value={editingVideoId ? editVideoForm.duration : newVideo.duration} 
+                    <input type="text" className="form-control" placeholder="Duration" value={editingVideoId ? editVideoForm.duration : newVideo.duration} 
                       onChange={e => editingVideoId ? setEditVideoForm({...editVideoForm, duration: e.target.value}) : setNewVideo({...newVideo, duration: e.target.value})} required />
                   </div>
                   <div className="mb-4">
@@ -1007,10 +1007,10 @@ const AdminDashboard = () => {
                         <td><code>{v.youtube_id}</code></td>
                         <td><span className="badge bg-light text-primary border border-primary-subtle">{v.level}</span></td>
                         <td className="text-end text-nowrap">
-                          <button className="btn btn-sm btn-light border me-2" onClick={() => handleEditVideo(v)}>
+                          <button className="btn btn-sm btn-light border me-2" onClick={() => handleEditVideo(v)} aria-label="Edit">
                             <i className="bi bi-pencil"></i>
                           </button>
-                          <button className="btn btn-sm btn-outline-danger" onClick={() => deleteVideo(v.id)}>
+                          <button className="btn btn-sm btn-outline-danger" onClick={() => deleteVideo(v.id)} aria-label="Delete">
                             <i className="bi bi-trash"></i>
                           </button>
                         </td>
@@ -1101,12 +1101,12 @@ const AdminDashboard = () => {
                 <form onSubmit={handleSendBroadcast}>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Subject</label>
-                    <input type="text" className="form-control" value={broadcast.subject} 
+                    <input type="text" className="form-control" placeholder="Subject" value={broadcast.subject} 
                       onChange={e => setBroadcast({...broadcast, subject: e.target.value})} required />
                   </div>
                   <div className="mb-4">
                     <label className="form-label small fw-bold text-muted">Message</label>
-                    <textarea className="form-control" rows="6" value={broadcast.message} 
+                    <textarea className="form-control" rows="6" placeholder="Message" value={broadcast.message} 
                       onChange={e => setBroadcast({...broadcast, message: e.target.value})} required />
                   </div>
                   <button type="submit" className="btn btn-primary w-100" disabled={!subscribers.length}>

@@ -27,7 +27,7 @@ describe('AdminDashboard Page', () => {
     );
     // Since we are mocking useNavigate, we can't easily check the redirect here without more setup,
     // but we can check if it tries to load or shows loading.
-    expect(screen.getByText(/Loading Admin Dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Loading dashboard data/i)).toBeInTheDocument();
   });
 
   it('renders dashboard when token is present', async () => {
@@ -44,7 +44,7 @@ describe('AdminDashboard Page', () => {
     );
 
     await waitFor(() => {
-      expect(screen.queryByText(/Loading Admin Dashboard/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Loading dashboard data/i)).not.toBeInTheDocument();
     });
 
     expect(screen.getByText(/Admin Dashboard/i)).toBeInTheDocument();
@@ -83,7 +83,7 @@ describe('AdminDashboard Page', () => {
     );
 
     await waitFor(() => {
-      expect(screen.queryByText(/Loading Admin Dashboard/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Loading dashboard data/i)).not.toBeInTheDocument();
     });
 
     // Switch to Programs tab
@@ -143,7 +143,7 @@ describe('AdminDashboard Page', () => {
     );
 
     await waitFor(() => {
-      expect(screen.queryByText(/Loading Admin Dashboard/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Loading dashboard data/i)).not.toBeInTheDocument();
     });
 
     await user.click(screen.getByRole('button', { name: /Programs/i }));

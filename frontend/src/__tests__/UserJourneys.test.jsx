@@ -44,7 +44,7 @@ describe('User Journey & Functional Tests', () => {
   // 3. Content Resilience - Empty States (Scenario #5)
   it('Resilience: Shows friendly message when no classes are scheduled', async () => {
     // Mock empty response from backend
-    fetch.mockResolvedValueOnce({
+    fetch.mockResolvedValue({
       ok: true,
       json: async () => []
     });
@@ -59,7 +59,7 @@ describe('User Journey & Functional Tests', () => {
 
   it('Resilience: Shows friendly message when no courses are available', async () => {
     // Mock empty response
-    fetch.mockResolvedValueOnce({
+    fetch.mockResolvedValue({
       ok: true,
       json: async () => []
     });
@@ -74,7 +74,10 @@ describe('User Journey & Functional Tests', () => {
 
   // 4. Contact-to-Submission Loop (Scenario #1 partial - UI side)
   it('Functional: Contact form submission shows success and clears', async () => {
-    fetch.mockResolvedValueOnce({ ok: true }); // Mock success response
+    fetch.mockResolvedValue({ 
+      ok: true,
+      json: async () => ({ success: true })
+    }); // Mock success response
 
     window.history.pushState({}, 'Test', '/contact');
     render(<App />);

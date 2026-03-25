@@ -9,6 +9,9 @@ import { API_BASE_URL } from '../config';
  * @param {boolean} options.isTraffic - Whether this should count as a "visit"
  */
 export const trackActivity = async ({ type, description, metadata = {}, isTraffic = false }) => {
+  if (typeof fetch === 'undefined') {
+    return;
+  }
   try {
     const token = localStorage.getItem('memberToken');
     const headers = {
