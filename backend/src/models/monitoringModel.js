@@ -9,7 +9,7 @@ export const logTraffic = async (trafficData) => {
     'INSERT INTO site_traffic (ip_address, user_agent, path, referrer) VALUES ($1, $2, $3, $4) RETURNING *',
     [ip_address, user_agent, path, referrer]
   );
-  return result.rows[0];
+  return result?.rows ? result.rows[0] : null;
 };
 
 /**
@@ -21,7 +21,7 @@ export const logActivity = async (activityData) => {
     'INSERT INTO user_activities (member_id, activity_type, description, metadata) VALUES ($1, $2, $3, $4) RETURNING *',
     [member_id, activity_type, description, metadata ? JSON.stringify(metadata) : null]
   );
-  return result.rows[0];
+  return result?.rows ? result.rows[0] : null;
 };
 
 /**

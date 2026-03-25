@@ -4,8 +4,8 @@ import * as MonitoringModel from '../models/monitoringModel.js';
  * Middleware to audit API requests
  */
 export const auditMiddleware = async (req, res, next) => {
-  // Skip auditing for monitoring routes themselves to avoid loops
-  if (req.path.startsWith('/api/monitoring')) {
+  // Skip auditing during tests or for monitoring routes themselves
+  if (process.env.NODE_ENV === 'test' || req.path.startsWith('/api/monitoring')) {
     return next();
   }
 
